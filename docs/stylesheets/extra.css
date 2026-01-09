@@ -1,0 +1,317 @@
+/* CSS personnalisé pour le site IFT2015 */
+
+/* Variables CSS personnalisées */
+:root {
+    --ift-primary-color: #1976d2;
+    --ift-accent-color: #42a5f5;
+    --ift-success-color: #4caf50;
+    --ift-warning-color: #ff9800;
+    --ift-error-color: #f44336;
+    --ift-gray-light: rgba(0, 0, 0, 0.05);
+    --ift-gray-medium: rgba(0, 0, 0, 0.1);
+    --ift-shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --ift-shadow-medium: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --ift-shadow-heavy: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Mode sombre */
+[data-md-color-scheme="slate"] {
+    --ift-primary-color: #64b5f6;
+    --ift-accent-color: #90caf9;
+    --ift-gray-light: rgba(255, 255, 255, 0.05);
+    --ift-gray-medium: rgba(255, 255, 255, 0.1);
+}
+
+/* ===== MISE EN PAGE ===== */
+.md-content__inner {
+    margin-left: 10rem;
+    max-width: 1200px;
+}
+
+/* Ajuster pour les écrans plus larges */
+@media screen and (min-width: 76.25em) {
+    .md-content__inner {
+        margin-left: 10rem;
+    }
+}
+
+/* Ajuster pour les écrans mobiles */
+@media screen and (max-width: 44.9375em) {
+    .md-content__inner {
+        margin-left: 2rem;
+    }
+}
+
+/* ===== AMÉLIORATIONS VISUELLES ===== */
+
+/* Améliorer l'espacement des tableaux */
+.md-typeset table {
+    margin: 1.5em 0;
+    box-shadow: var(--ift-shadow-medium);
+    border-radius: 8px;
+    overflow: hidden;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.md-typeset table th {
+    background: var(--ift-primary-color);
+    color: white;
+    font-weight: 600;
+    text-align: center;
+    padding: 12px 16px;
+    border: none;
+}
+
+.md-typeset table td {
+    padding: 12px 16px;
+    vertical-align: middle;
+    border: none;
+}
+
+.md-typeset table tr:nth-child(even) {
+    background-color: var(--ift-gray-light);
+}
+
+.md-typeset table tr:hover {
+    background-color: var(--ift-gray-medium);
+    transition: background-color 0.2s ease;
+}
+
+/* Améliorer les liens de téléchargement */
+.md-typeset a[download] {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, var(--ift-primary-color), var(--ift-accent-color));
+    color: white !important;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin: 4px 8px 4px 0;
+    box-shadow: var(--ift-shadow-light);
+}
+
+.md-typeset a[download]:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ift-shadow-heavy);
+    filter: brightness(1.1);
+}
+
+.md-typeset a[download]:active {
+    transform: translateY(0);
+}
+
+/* Améliorer les blocs de code */
+.md-typeset .highlight {
+    margin: 1.5em 0;
+    border-radius: 8px;
+    box-shadow: var(--ift-shadow-medium);
+}
+
+.md-typeset code {
+    padding: 2px 6px;
+    background: var(--ift-gray-light);
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+/* Améliorer les admonitions (boîtes d'info) */
+.md-typeset .admonition {
+    margin: 1.5em 0;
+    border-radius: 8px;
+    box-shadow: var(--ift-shadow-medium);
+    border-left: 4px solid var(--ift-accent-color);
+}
+
+.md-typeset .admonition-title {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+/* Améliorer les titres */
+.md-typeset h1 {
+    color: var(--ift-primary-color);
+    border-bottom: 3px solid var(--ift-accent-color);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.md-typeset h2 {
+    color: var(--ift-primary-color);
+    border-left: 4px solid var(--ift-accent-color);
+    padding-left: 1rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.md-typeset h3 {
+    color: var(--ift-primary-color);
+    opacity: 0.8;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Améliorer les tableaux sur mobile */
+@media screen and (max-width: 767px) {
+    .md-typeset table {
+        font-size: 0.9em;
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .md-typeset table th,
+    .md-typeset table td {
+        padding: 8px 12px;
+    }
+
+    .md-typeset table thead,
+    .md-typeset table tbody,
+    .md-typeset table tr {
+        display: table;
+        width: 100%;
+    }
+}
+
+/* Améliorer les liens de téléchargement sur mobile */
+@media screen and (max-width: 767px) {
+    .md-typeset a[download] {
+        display: block;
+        margin: 8px 0;
+        text-align: center;
+    }
+}
+
+/* ===== AMÉLIORATIONS SPÉCIFIQUES ===== */
+
+/* Améliorer l'espacement des sections */
+.md-typeset hr {
+    margin: 2.5rem 0;
+    border: none;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--ift-accent-color), transparent);
+}
+
+/* Améliorer l'apparence des listes */
+.md-typeset ul {
+    margin: 1rem 0;
+}
+
+.md-typeset li {
+    margin: 0.5rem 0;
+}
+
+/* Améliorer l'apparence du footer */
+.md-footer {
+    background: linear-gradient(135deg, var(--ift-primary-color), var(--ift-accent-color));
+}
+
+/* Améliorer l'apparence de la barre de navigation */
+.md-header {
+    background: linear-gradient(135deg, var(--ift-primary-color), var(--ift-accent-color));
+    box-shadow: var(--ift-shadow-medium);
+}
+
+/* Animations fluides */
+* {
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+/* Améliorer l'apparence des boutons de recherche */
+.md-search__form {
+    border-radius: 8px;
+}
+
+/* Améliorer l'espacement général */
+.md-main__inner {
+    padding-top: 1rem;
+}
+
+/* Style pour les emoji dans les titres */
+.md-typeset h1 .twemoji,
+.md-typeset h2 .twemoji,
+.md-typeset h3 .twemoji {
+    vertical-align: -0.1em;
+    margin-left: 0.5rem;
+}
+
+/* Améliorer l'apparence des badges de difficulté */
+.md-typeset table td {
+    font-size: 1em;
+}
+
+.md-typeset table td:first-child {
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Styles spécifiques pour les émojis de difficulté */
+.md-typeset table td:nth-child(3) {
+    font-size: 1.2em;
+    text-align: center;
+}
+
+
+/* css
+   Style custom pour l'admonition `news`.
+   Cible à la fois `.admonition.news` et `.admonition--news` (selon le rendu).
+*/
+.md-typeset .admonition.news,
+.md-typeset .admonition.admonition--news {
+    border-left: 4px solid var(--ift-accent-color);
+    background: linear-gradient(90deg, rgba(66,165,245,0.05), rgba(25,118,210,0.02));
+    color: rgba(0,0,0,0.85);
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+/* Titre avec icône */
+.md-typeset .admonition.news .admonition-title,
+.md-typeset .admonition.admonition--news .admonition-title {
+    background: linear-gradient(90deg, var(--ift-primary-color), var(--ift-accent-color));
+    color: #fff;
+    padding: 0.25rem 2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+/* Supprimer l'icône par défaut de l'admonition news */
+.md-typeset .admonition.news .admonition-title::before,
+.md-typeset .admonition.news .admonition-title::after,
+.md-typeset .admonition.news::before,
+.md-typeset .admonition.news::after,
+.md-typeset .admonition.admonition--news .admonition-title::before,
+.md-typeset .admonition.admonition--news .admonition-title::after,
+.md-typeset .admonition.admonition--news::before,
+.md-typeset .admonition.admonition--news::after {
+    display: none !important;
+    content: "" !important;
+    background: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Réduire l'espace laissé par l'icône supprimée sur le titre news */
+.md-typeset .admonition.news .admonition-title,
+.md-typeset .admonition.admonition--news .admonition-title {
+    gap: 0.5rem !important;
+}
+
+
+/* Variante mode sombre */
+[data-md-color-scheme="slate"] .md-typeset .admonition.news,
+[data-md-color-scheme="slate"] .md-typeset .admonition.admonition--news {
+    background: linear-gradient(90deg, rgba(100,181,246,0.04), rgba(100,181,246,0.01));
+    color: rgba(255,255,255,0.9);
+}
