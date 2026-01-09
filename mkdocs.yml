@@ -37,7 +37,10 @@ theme:
 
 nav:
   - Accueil: index.md
-  - Exercices: exercices/index.md
+  - Exercices:
+      - Aperçu: exercices/index.md
+      - "Semaine 1 : introduction aux structures de données": exercices/semaine1.md
+  - Configuration: configuration.md
   - Corrections: corrections/index.md
   - Travaux pratiques: tp/index.md
 
