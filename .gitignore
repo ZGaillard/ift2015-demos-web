@@ -34,3 +34,6 @@ Thumbs.db
 
 # MkDocs cache
 .cache/
+
+# Archived previous site
+old/
