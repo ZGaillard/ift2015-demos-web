@@ -1,5 +1,9 @@
-# Travaux pratiques
+# :material-file-document-edit: Travaux pratiques
 
-Contenu à venir.
+Cette section contient les consignes et ressources pour les travaux pratiques notés du cours IFT2015.
 
-Les consignes et les dates de remise seront ajoutées ici.
+---
+
+## :material-numeric-1-circle: TP1
+
+À venir.

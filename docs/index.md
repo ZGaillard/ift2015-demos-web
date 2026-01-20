@@ -1,66 +1,55 @@
 # IFT2015 - Structures de données
 
-Site des démonstrations et du matériel d'appui pour le cours IFT2015 (UdeM).
-Vous y trouverez les exercices, travaux pratiques, corrections et ressources utiles au fil de la session.
+Bienvenue sur le site des démonstrations du cours **IFT2015 - Structures de données** de l'Université de Montréal.
 
-!!! info "Site en préparation"
-    Le site est en cours de mise en place. Les sections seront remplies progressivement.
-
-## News
-
-!!! news "Ouverture du site"
-    La nouvelle version du site IFT2015 est en ligne. Les premiers exercices et le TP1 seront ajoutés bientôt.
+Ce site regroupe les exercices pratiques, les travaux pratiques et les ressources utiles pour accompagner votre apprentissage tout au long de la session.
 
 ---
 
-## Accès rapide
+## Navigation rapide
 
-[**Exercices**](exercices/index.md){ .md-button .md-button--primary style="font-size:16px; padding:3px 8px;" }
-[**Corrections**](corrections/index.md){ .md-button style="font-size:16px; padding:3px 8px;" }
-[**Travaux pratiques**](tp/index.md){ .md-button .md-button--secondary style="font-size:16px; padding:3px 8px;" }
-
----
-
-## Travaux pratiques
-
-- TP1 : détails et dates de remise à venir.
+[:material-book-open-variant: **Exercices**](exercices/index.md){ .md-button .md-button--primary }
+[:material-file-document-edit: **Travaux pratiques**](tp/index.md){ .md-button }
 
 ---
 
-## Exercices pratiques
+## Manuel de référence
 
-Chaque semaine, de nouveaux exercices seront publiés ici avec leurs corrigés la semaine suivante.
+Le cours suit le manuel **Data Structures and Algorithms in Java (6th Edition)** de Goodrich, Tamassia et Goldwasser.
+
+[:material-file-pdf-box: Télécharger le manuel (PDF)](files/pdf/Data%20Structures%20and%20Algorithms%20in%20Java,%206th%20Edition.pdf){ .md-button .md-button--primary }
+
+[:material-presentation: Diapositives d'introduction (PDF)](files/pdf/Introduction.pdf){ .md-button }
 
 ---
 
 ## Ressources utiles
 
-- Visualisation d'algorithmes et de structures de données : [lien](https://www.cs.usfca.edu/~galles/visualization/Algorithms.html)
-- LeetCode pour pratiquer : [lien](https://leetcode.com/problemset)
-- Stack Overflow : [lien](https://stackoverflow.com/)
+### :material-chart-line: Visualisation et pratique
 
----
+- [:material-animation: Visualisation d'algorithmes](https://www.cs.usfca.edu/~galles/visualization/Algorithms.html) - Animations interactives des structures de données
+- [:material-graph: VisuAlgo](https://visualgo.net/) - Visualisation d'algorithmes et structures
+- [:material-code-braces: LeetCode](https://leetcode.com/problemset) - Pratique de problèmes algorithmiques
+- [:material-trophy: HackerRank](https://www.hackerrank.com/domains/data-structures) - Exercices sur les structures de données
 
-## Comment utiliser ce site
+### :material-language-java: Documentation Java
 
-1. Consultez les exercices de la semaine
-2. Téléchargez les squelettes et énoncés
-3. Implémentez vos solutions étape par étape
-4. Consultez les corrections lorsqu'elles sont publiées
-
-!!! tip "Conseil"
-    Revenez chaque semaine : nouveaux exercices et mises à jour régulières.
+- [:material-book: Java SE Documentation](https://docs.oracle.com/en/java/javase/17/docs/api/)
+- [:material-folder-multiple: Java Collections Framework](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/package-summary.html)
 
 ---
 
 ## Contact
 
-Contactez-moi par email si vous avez des questions ou des suggestions :
-**zakary.gaillard-duchassin@umontreal.ca**
+**Zakary Gaillard-Duchassin**
 
-Bureau : **Pavillon Jean et Marcelle Coutu, Laboratoire de l'IRIC, bureau 3367**
-(Mon bureau n'est pas accessible sans pass, merci de prendre rendez-vous par email avant de passer pour que je puisse vous ouvrir.)
+- :material-email: [zakary.gaillard-duchassin@umontreal.ca](mailto:zakary.gaillard-duchassin@umontreal.ca)
+- :material-map-marker: Pavillon Jean et Marcelle Coutu, Laboratoire de l'IRIC, bureau 3367
+- :material-phone: (438) 409-1188
 
-Téléphone : **(438) 409-1188**
+!!! note "Prise de rendez-vous"
+    Mon bureau n'est pas accessible sans pass. Merci de prendre rendez-vous par courriel avant de passer pour que je puisse vous ouvrir.
+
+---
 
 *Site mis à jour régulièrement durant la session.*

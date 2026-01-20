@@ -39,12 +39,10 @@ nav:
   - Accueil: index.md
   - Exercices:
       - Aperçu: exercices/index.md
-      - "Semaine 1 : introduction aux structures de données": exercices/semaine1.md
-  - Configuration: configuration.md
-  - Corrections: corrections/index.md
+      - "Démonstration 2 : Listes et listes positionnelles": exercices/demo2.md
   - Travaux pratiques: tp/index.md
-
-
+  - Corrections: corrections.md
+  - Configuration: configuration.md
 
 markdown_extensions:
   - admonition
@@ -56,6 +54,9 @@ markdown_extensions:
   - pymdownx.snippets
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - attr_list
   - md_in_html
   - tables
@@ -77,4 +78,4 @@ extra:
       link: mailto:zakary.gaillard-duchassin@umontreal.ca
 
 copyright: |
-  &copy; 2025 Zakary Gaillard-Duchassin - Université de Montréal
+  &copy; 2026 Zakary Gaillard-Duchassin - Université de Montréal

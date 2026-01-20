@@ -1,5 +1,17 @@
-# Exercices pratiques
+# :material-book-open-variant: Exercices pratiques
 
-Les exercices de chaque semaine seront ajoutés ici.
+Cette section contient les exercices pratiques hebdomadaires du cours IFT2015. Chaque série d'exercices comprend des questions théoriques et des exercices d'implémentation avec les solutions intégrées.
 
-- [Semaine 1 : introduction aux structures de données](semaine1.md)
+!!! tip "Comment utiliser les exercices"
+    1. Lisez d'abord les rappels théoriques
+    2. Essayez de résoudre les exercices par vous-même
+    3. Cliquez sur les questions pour révéler les solutions
+    4. Revisitez les exercices avant les examens
+
+---
+
+## Exercices disponibles
+
+| Semaine | Chapitre | Sujet | Lien |
+|:-------:|:--------:|-------|:----:|
+| 2 | 7 | Listes et listes positionnelles | [:material-arrow-right-circle: Démonstration 2](demo2.md) |
