@@ -471,7 +471,7 @@ body.ift-hide-toc .md-sidebar--secondary {
 
 body.ift-hide-toc .md-content__inner {
     max-width: none;
-    padding-right: 1rem;
+    padding-right: 2rem;
 }
 
 body.ift-hide-toc .md-content {
