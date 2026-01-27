@@ -315,3 +315,165 @@
     background: linear-gradient(90deg, rgba(100,181,246,0.04), rgba(100,181,246,0.01));
     color: rgba(255,255,255,0.9);
 }
+
+/* ===== MERMAID DIAGRAMS ===== */
+
+/* Keep diagrams within the content width and scale to fit */
+.md-typeset .mermaid {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin: 1.5em 0;
+    overflow-x: auto;
+}
+
+.md-typeset .mermaid svg {
+    display: block;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+}
+
+/* ===== SIMPLE HTML DIAGRAMS ===== */
+
+.md-typeset .ift-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 100%;
+    margin: 1.5em 0;
+    flex-wrap: nowrap;
+}
+
+.md-typeset .ift-diagram__node {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 2px solid #999;
+    background: #f7f7f7;
+    color: #333;
+    text-align: center;
+    box-shadow: var(--ift-shadow-light);
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.md-typeset .ift-diagram__node--head {
+    background: #ffe08a;
+    border-color: #b8860b;
+    color: #4d3b00;
+    font-weight: 600;
+}
+
+.md-typeset .ift-diagram__node--top {
+    background: #c7f7d4;
+    border-color: #2e7d32;
+    color: #1b5e20;
+    font-weight: 600;
+}
+
+.md-typeset .ift-diagram__node--label {
+    background: #fff4cc;
+    border-color: #b58900;
+    color: #4d3b00;
+}
+
+.md-typeset .ift-diagram__node--null {
+    background: #f3f3f3;
+    border-color: #999;
+    border-style: dashed;
+    color: #666;
+}
+
+.md-typeset .ift-diagram__title {
+    font-weight: 600;
+}
+
+.md-typeset .ift-diagram__meta {
+    font-size: 0.9em;
+}
+
+.md-typeset .ift-diagram__arrow {
+    flex: 0 0 1.75rem;
+    position: relative;
+    height: 0.75rem;
+    color: #555;
+    user-select: none;
+}
+
+.md-typeset .ift-diagram__arrow::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: calc(100% - 0.4rem);
+    height: 2px;
+    background: currentColor;
+    transform: translateY(-50%);
+}
+
+.md-typeset .ift-diagram__arrow::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 6px solid currentColor;
+    transform: translateY(-50%);
+}
+
+@media screen and (max-width: 767px) {
+    .md-typeset .ift-diagram {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .md-typeset .ift-diagram__node {
+        flex: 0 0 auto;
+        min-width: 6rem;
+    }
+}
+
+/* ===== TOC TOGGLE ===== */
+
+.md-typeset .ift-toc-toggle {
+    display: flex;
+    justify-content: flex-end;
+    margin: 0 0 1rem;
+}
+
+.md-typeset .ift-toggle-btn {
+    border: 1px solid var(--ift-primary-color);
+    background: #fff;
+    color: var(--ift-primary-color);
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.85em;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--ift-shadow-light);
+}
+
+.md-typeset .ift-toggle-btn[aria-pressed="true"] {
+    background: var(--ift-primary-color);
+    color: #fff;
+}
+
+body.ift-hide-toc .md-sidebar--secondary {
+    display: none;
+}
+
+body.ift-hide-toc .md-content__inner {
+    max-width: none;
+    padding-right: 1rem;
+}
+
+body.ift-hide-toc .md-content {
+    max-width: 100%;
+}

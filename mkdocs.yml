@@ -40,6 +40,7 @@ nav:
   - Exercices:
       - Aperçu: exercices/index.md
       - "Démonstration 2 : Listes et listes positionnelles": exercices/demo2.md
+      - "Démonstration 3 : Piles, Files, Deques et Liste de Favoris": exercices/demo3.md
   - Travaux pratiques: tp/index.md
   - Corrections: corrections.md
   - Configuration: configuration.md
@@ -47,7 +48,13 @@ nav:
 markdown_extensions:
   - admonition
   - pymdownx.details
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.arithmatex:
+      generic: true
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
@@ -66,6 +73,12 @@ markdown_extensions:
 plugins:
   - search:
       lang: fr
+  - mkdocs_matplotlib
+
+extra_javascript:
+  - javascripts/toc-toggle.js
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
 
 extra_css:
   - stylesheets/extra.css

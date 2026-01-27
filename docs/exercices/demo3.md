@@ -1,0 +1,1918 @@
+# Démonstration 3 : Piles, Files, Deques et Liste de Favoris
+
+Cette démonstration porte sur le **Chapitre 6** (*Stacks, Queues, and Deques*) et la **Section 7.7** (*The Favorites List ADT*) du livre *Data Structures and Algorithms in Java (6th ed.)*.
+
+!!! abstract "Objectifs d'apprentissage"
+
+    À la fin de cette démonstration, vous devriez être capable de :
+
+    * **Analyser la complexité** d'un algorithme avec la notation Big-O
+    * Distinguer les ADT Pile, File et Deque selon leur politique d'accès (LIFO vs FIFO)
+    * Implémenter ces structures avec des tableaux (circulaires) et des listes chaînées
+    * Comprendre l'heuristique « move-to-front » et analyser son impact sur la complexité
+    * Appliquer ces structures à des problèmes concrets (parenthèses, expressions, cache)
+    * Reconnaître les problématiques de concurrence avec les files partagées
+
+---
+
+## Rappel : Complexité asymptotique
+
+Avant d'aborder les structures de données, révisons la **complexité asymptotique**, un outil fondamental pour analyser l'efficacité des algorithmes.
+
+### Qu'est-ce que la complexité asymptotique ?
+
+La complexité asymptotique décrit comment le **temps d'exécution** (ou l'**espace mémoire**) d'un algorithme évolue lorsque la taille de l'entrée (n) devient très grande.
+
+!!! info "L'idée clé"
+
+    On ne mesure pas le temps exact en secondes (qui dépend du matériel), mais le **taux de croissance** du nombre d'opérations en fonction de n.
+
+### La notation Big-O
+
+La notation **O(...)** (« Big-O ») exprime une **borne supérieure** sur la croissance :
+
+> « f(n) est O(g(n)) » signifie que f(n) croît **au plus aussi vite** que g(n) pour de grandes valeurs de n.
+
+---
+
+### Définitions mathématiques formelles
+
+Les notations asymptotiques permettent de comparer la croissance de fonctions. Voici les trois principales :
+
+#### Big-O : Borne supérieure asymptotique
+
+!!! note "Définition : O (Big-O)"
+
+    Soit f : ℕ → ℝ⁺ et g : ℕ → ℝ⁺ deux fonctions.
+
+    $$f(n) \in O(g(n)) \iff \exists\, c > 0,\; \exists\, n_0 \in \mathbb{N},\; \forall\, n \geq n_0 : f(n) \leq c \cdot g(n)$$
+
+    **En mots :** À partir d'un certain rang n₀, f(n) est **majorée** par un multiple constant de g(n).
+
+```python
+# mkdocs: render
+# mkdocs: hidecode
+import matplotlib.pyplot as plt
+import numpy as np
+
+fig, ax = plt.subplots(figsize=(8, 5))
+
+n = np.linspace(0.1, 10, 200)
+n0 = 3
+
+# f(n) starts above c·g(n) then stays well below after n0
+g = n ** 1.5
+c = 2.0
+f = np.where(n < n0, 1.5 * n**1.8 + 2, 2* n + 1)
+
+ax.plot(n, c * g, 'b-', linewidth=2.5, label=r'$c \cdot g(n)$')
+ax.plot(n, f, 'r-', linewidth=2.5, label=r'$f(n)$')
+ax.axvline(x=n0, color='gray', linestyle='--', linewidth=2, label=r'$n_0$')
+
+ax.fill_between(n[n >= n0], f[n >= n0], c * g[n >= n0], alpha=0.3, color='green')
+
+ax.set_xlabel('n', fontsize=14)
+ax.set_ylabel('Temps', fontsize=14)
+ax.set_title(r'Interprétation graphique de $f(n) \in O(g(n))$', fontsize=14)
+ax.legend(loc='upper left', fontsize=12)
+ax.set_xlim(0, 10)
+ax.set_ylim(0, 65)
+ax.annotate(r'$f(n) \leq c \cdot g(n)$', xy=(7, 25), fontsize=13,
+            bbox=dict(boxstyle='round', facecolor='lightgreen', alpha=0.7))
+
+plt.tight_layout()
+```
+
+??? example "Exemple : Montrer que 3n² + 5n + 2 ∈ O(n²)"
+
+    On cherche c > 0 et n₀ tels que 3n² + 5n + 2 ≤ c · n² pour tout n ≥ n₀.
+
+    **Méthode :** Pour n ≥ 1, on a :
+
+    * 5n ≤ 5n²
+    * 2 ≤ 2n²
+
+    Donc : 3n² + 5n + 2 ≤ 3n² + 5n² + 2n² = 10n²
+
+    **Conclusion :** Avec c = 10 et n₀ = 1, on a bien 3n² + 5n + 2 ≤ 10n² pour tout n ≥ 1.
+
+    Donc **3n² + 5n + 2 ∈ O(n²)** ✓
+
+#### Big-Ω : Borne inférieure asymptotique
+
+!!! note "Définition : Ω (Big-Omega)"
+
+    $$f(n) \in \Omega(g(n)) \iff \exists\, c > 0,\; \exists\, n_0 \in \mathbb{N},\; \forall\, n \geq n_0 : f(n) \geq c \cdot g(n)$$
+
+    **En mots :** À partir d'un certain rang, f(n) est **minorée** par un multiple constant de g(n).
+
+Big-Ω est le « miroir » de Big-O : il exprime que f croît **au moins aussi vite** que g.
+
+??? example "Exemple : Montrer que 3n² + 5n + 2 ∈ Ω(n²)"
+
+    On cherche c > 0 et n₀ tels que 3n² + 5n + 2 ≥ c · n² pour tout n ≥ n₀.
+
+    Comme 5n ≥ 0 et 2 ≥ 0 pour n ≥ 0, on a :
+
+    3n² + 5n + 2 ≥ 3n²
+
+    **Conclusion :** Avec c = 3 et n₀ = 0, la condition est satisfaite.
+
+    Donc **3n² + 5n + 2 ∈ Ω(n²)** ✓
+
+#### Big-Θ : Borne exacte asymptotique
+
+!!! note "Définition : Θ (Big-Theta)"
+
+    $$f(n) \in \Theta(g(n)) \iff f(n) \in O(g(n)) \;\text{ et }\; f(n) \in \Omega(g(n))$$
+
+    Équivalent à :
+
+    $$f(n) \in \Theta(g(n)) \iff \exists\, c_1, c_2 > 0,\; \exists\, n_0,\; \forall\, n \geq n_0 : c_1 \cdot g(n) \leq f(n) \leq c_2 \cdot g(n)$$
+
+    **En mots :** f(n) croît **exactement au même rythme** que g(n), à des constantes près.
+
+```python
+# mkdocs: render
+# mkdocs: hidecode
+import matplotlib.pyplot as plt
+import numpy as np
+
+fig, ax = plt.subplots(figsize=(8, 5))
+
+n = np.linspace(0.1, 10, 200)
+n0 = 3
+
+# f(n) sandwiched between c1·g(n) and c2·g(n) after n0
+g = n ** 1.5
+c1, c2 = 0.5, 2.5
+f = np.where(n < n0, 0.3 * n**2 + 1, 1.5 * n**1.5 + 0.5 * np.sin(n))
+
+ax.plot(n, c2 * g, 'b-', linewidth=2.5, label=r'$c_2 \cdot g(n)$')
+ax.plot(n, f, 'r-', linewidth=2.5, label=r'$f(n)$')
+ax.plot(n, c1 * g, 'g-', linewidth=2.5, label=r'$c_1 \cdot g(n)$')
+ax.axvline(x=n0, color='gray', linestyle='--', linewidth=2, label=r'$n_0$')
+
+ax.fill_between(n[n >= n0], c1 * g[n >= n0], c2 * g[n >= n0], alpha=0.25, color='purple')
+
+ax.set_xlabel('n', fontsize=14)
+ax.set_ylabel('Temps', fontsize=14)
+ax.set_title(r'Interprétation graphique de $f(n) \in \Theta(g(n))$', fontsize=14)
+ax.legend(loc='upper left', fontsize=12)
+ax.set_xlim(0, 10)
+ax.set_ylim(0, 80)
+ax.annotate(r'$c_1 \cdot g(n) \leq f(n) \leq c_2 \cdot g(n)$', xy=(5.5, 12), fontsize=13,
+            bbox=dict(boxstyle='round', facecolor='plum', alpha=0.7))
+
+plt.tight_layout()
+```
+
+??? example "Exemple : Montrer que 3n² + 5n + 2 ∈ Θ(n²)"
+
+    On a déjà montré :
+
+    * 3n² + 5n + 2 ∈ O(n²) avec c₂ = 10
+    * 3n² + 5n + 2 ∈ Ω(n²) avec c₁ = 3
+
+    Donc **3n² + 5n + 2 ∈ Θ(n²)** ✓
+
+    On dit que 3n² + 5n + 2 a une croissance **quadratique**.
+
+#### Récapitulatif des notations
+
+| Notation | Signification | Analogie |
+|----------|---------------|----------|
+| f(n) ∈ O(g(n)) | f croît **au plus aussi vite** que g | f ≤ g (asymptotiquement) |
+| f(n) ∈ Ω(g(n)) | f croît **au moins aussi vite** que g | f ≥ g (asymptotiquement) |
+| f(n) ∈ Θ(g(n)) | f croît **exactement comme** g | f ≈ g (asymptotiquement) |
+| f(n) ∈ o(g(n)) | f croît **strictement moins vite** que g | f < g (asymptotiquement) |
+| f(n) ∈ ω(g(n)) | f croît **strictement plus vite** que g | f > g (asymptotiquement) |
+
+---
+
+### Critère de la limite
+
+Le **critère de la limite** est souvent plus pratique que la définition pour comparer deux fonctions :
+
+!!! note "Théorème : Critère de la limite"
+
+    Soit $L = \lim_{n \to \infty} \frac{f(n)}{g(n)}$ (si cette limite existe ou vaut +∞). Alors :
+
+    | Valeur de L | Conclusion |
+    |-------------|------------|
+    | L = 0 | f(n) ∈ o(g(n)) ⊂ O(g(n)) — f croît **strictement moins vite** que g |
+    | 0 < L < +∞ | f(n) ∈ Θ(g(n)) — f et g ont la **même croissance** |
+    | L = +∞ | f(n) ∈ ω(g(n)) ⊂ Ω(g(n)) — f croît **strictement plus vite** que g |
+
+??? example "Exemple 1 : Comparer 5n³ et 2n²"
+
+    $$L = \lim_{n \to \infty} \frac{5n^3}{2n^2} = \lim_{n \to \infty} \frac{5n}{2} = +\infty$$
+
+    **Conclusion :** 5n³ ∈ ω(2n²), donc 5n³ croît strictement plus vite que 2n².
+
+    Autrement dit : **n³ domine n²**.
+
+??? example "Exemple 2 : Comparer log(n) et √n"
+
+    $$L = \lim_{n \to \infty} \frac{\log n}{\sqrt{n}}$$
+
+    C'est une forme indéterminée ∞/∞. On applique la règle de L'Hôpital :
+
+    $$L = \lim_{n \to \infty} \frac{1/n}{1/(2\sqrt{n})} = \lim_{n \to \infty} \frac{2\sqrt{n}}{n} = \lim_{n \to \infty} \frac{2}{\sqrt{n}} = 0$$
+
+    **Conclusion :** log(n) ∈ o(√n), donc log(n) croît strictement moins vite que √n.
+
+    Autrement dit : **√n domine log(n)**.
+
+??? example "Exemple 3 : Comparer 3n² + 7n et n²"
+
+    $$L = \lim_{n \to \infty} \frac{3n^2 + 7n}{n^2} = \lim_{n \to \infty} \left(3 + \frac{7}{n}\right) = 3$$
+
+    Comme 0 < 3 < +∞, on a **3n² + 7n ∈ Θ(n²)**.
+
+    Les deux fonctions ont la même croissance asymptotique.
+
+??? example "Exemple 4 : Comparer n! et 2ⁿ"
+
+    $$L = \lim_{n \to \infty} \frac{n!}{2^n}$$
+
+    On peut montrer (par le critère de d'Alembert ou Stirling) que cette limite vaut +∞.
+
+    **Conclusion :** n! ∈ ω(2ⁿ), donc **n! domine 2ⁿ**.
+
+    La factorielle croît plus vite que l'exponentielle !
+
+---
+
+### Hiérarchie des croissances
+
+Voici l'ordre de croissance des fonctions classiques (de la plus lente à la plus rapide) :
+
+$$1 \prec \log\log n \prec \log n \prec \sqrt{n} \prec n \prec n\log n \prec n^2 \prec n^3 \prec 2^n \prec n! \prec n^n$$
+
+où $f \prec g$ signifie $f(n) \in o(g(n))$, c'est-à-dire que f croît strictement moins vite que g.
+
+---
+
+### Propriétés utiles
+
+!!! info "Propriétés algébriques de Big-O"
+
+    Soient f₁(n) ∈ O(g₁(n)) et f₂(n) ∈ O(g₂(n)). Alors :
+
+    1. **Somme :** f₁(n) + f₂(n) ∈ O(max(g₁(n), g₂(n)))
+
+    2. **Produit :** f₁(n) · f₂(n) ∈ O(g₁(n) · g₂(n))
+
+    3. **Constante :** c · f₁(n) ∈ O(g₁(n)) pour toute constante c > 0
+
+    4. **Transitivité :** Si f(n) ∈ O(g(n)) et g(n) ∈ O(h(n)), alors f(n) ∈ O(h(n))
+
+??? example "Application des propriétés"
+
+    Soit l'algorithme avec :
+
+    * Une boucle en O(n)
+    * Suivie d'une boucle en O(n²)
+    * Dans laquelle on fait une opération en O(log n)
+
+``` java
+for(int i = 0; i < n; i++) {
+    // O(1)
+}
+for(int i = 0; i < n; i++) {
+    for(int j = 0; j < n; j++) {
+        // O(log n)
+    }
+}
+```
+
+    **Complexité totale :**
+
+    * Boucle 2 : O(n²) · O(log n) = O(n² log n)
+    * Total : O(n) + O(n² log n) = O(max(n, n² log n)) = **O(n² log n)**
+
+---
+
+### Les complexités courantes
+
+| Notation | Nom | Exemple | Comportement |
+|----------|-----|---------|--------------|
+| O(1) | Constante | Accès à un élément d'un tableau par index | Instantané, peu importe n |
+| O(log n) | Logarithmique | Recherche binaire | Très efficace, croît lentement |
+| O(n) | Linéaire | Parcours d'une liste | Proportionnel à n |
+| O(n log n) | Linéarithmique | Tri fusion (merge sort) | Efficace pour le tri |
+| O(n²) | Quadratique | Tri par insertion (pire cas) | Acceptable pour petit n |
+| O(2ⁿ) | Exponentielle | Certains problèmes de force brute | Impraticable pour grand n |
+
+```
+Croissance comparée (pour n = 1000) :
+
+O(1)       →           1 opération
+O(log n)   →          10 opérations
+O(n)       →       1,000 opérations
+O(n log n) →      10,000 opérations
+O(n²)      →   1,000,000 opérations
+O(2ⁿ)      → 10^301 opérations (impossible!)
+```
+
+### Règles de simplification
+
+Quand on analyse un algorithme, on simplifie l'expression :
+
+| Règle | Exemple | Résultat |
+|-------|---------|----------|
+| Ignorer les constantes | O(3n) | O(n) |
+| Ignorer les termes de moindre ordre | O(n² + n) | O(n²) |
+| Les boucles imbriquées se multiplient | Boucle O(n) dans boucle O(n) | O(n²) |
+| Les séquences s'additionnent | O(n) puis O(n) | O(n + n) = O(n) |
+
+??? example "Exemple : Analyse d'un algorithme"
+
+    ```java
+    public static int example(int[] arr) {
+        int n = arr.length;
+        int sum = 0;                    // O(1)
+
+        for (int i = 0; i < n; i++) {   // Boucle : n itérations
+            sum += arr[i];              // O(1) par itération
+        }
+
+        for (int i = 0; i < n; i++) {       // Boucle externe : n itérations
+            for (int j = 0; j < n; j++) {   // Boucle interne : n itérations
+                sum += arr[i] * arr[j];     // O(1)
+            }
+        }
+
+        return sum;                     // O(1)
+    }
+    ```
+
+    **Analyse :**
+
+    * Première boucle : O(n)
+    * Boucles imbriquées : O(n) × O(n) = O(n²)
+    * Total : O(1) + O(n) + O(n²) + O(1) = **O(n²)**
+
+    Le terme dominant O(n²) « absorbe » les autres.
+
+### Meilleur cas, pire cas, cas moyen
+
+Un même algorithme peut avoir différentes complexités selon l'entrée :
+
+| Type | Description | Exemple (recherche linéaire) |
+|------|-------------|------------------------------|
+| **Meilleur cas** | Entrée la plus favorable | Élément trouvé au début : O(1) |
+| **Pire cas** | Entrée la plus défavorable | Élément absent ou à la fin : O(n) |
+| **Cas moyen** | Moyenne sur toutes les entrées | En moyenne au milieu : O(n/2) = O(n) |
+
+!!! warning "Convention importante"
+
+    Sauf mention contraire, quand on dit « cet algorithme est O(n) », on parle du **pire cas**. C'est la garantie la plus utile en pratique.
+
+### Complexité amortie
+
+Parfois, une opération est **généralement rapide** mais **occasionnellement lente**. La **complexité amortie** moyenne le coût sur une séquence d'opérations.
+
+??? example "Exemple : ArrayList.add() en Java"
+
+    * **Cas normal** : Ajouter un élément prend O(1)
+    * **Cas rare** : Quand le tableau est plein, on le redimensionne (copie de n éléments) → O(n)
+
+    **Analyse amortie :**
+
+    Si on double la capacité à chaque redimensionnement :
+
+    * Après n insertions, on a fait des copies de taille 1, 2, 4, 8, ..., n
+    * Total des copies : 1 + 2 + 4 + ... + n ≈ 2n
+    * Coût moyen par opération : 2n / n = **O(1) amorti**
+
+    ```
+    Insertions :  1   2   3   4   5   6   7   8   9  ...
+    Capacité :   [1] [2] [2] [4] [4] [4] [4] [8] [8] ...
+                  ↑   ↑       ↑               ↑
+              redim. redim.  redim.         redim.
+    ```
+
+    Même si certaines opérations sont O(n), sur le long terme chaque opération « coûte » O(1) en moyenne.
+
+### Comment déterminer la complexité ?
+
+!!! tip "Méthode pratique"
+
+    1. **Identifier les boucles** : Chaque boucle multiplie par son nombre d'itérations
+    2. **Repérer les appels récursifs** : Dessiner l'arbre de récursion
+    3. **Chercher le terme dominant** : C'est lui qui détermine la complexité
+    4. **Vérifier les opérations cachées** : `list.contains()` est O(n), pas O(1) !
+
+??? question "Auto-évaluation : Quelle est la complexité ?"
+
+    Pour chaque extrait, déterminez la complexité en fonction de n :
+
+    **A)**
+    ```java
+    for (int i = 0; i < n; i += 2) {
+        System.out.println(i);
+    }
+    ```
+
+    **B)**
+    ```java
+    for (int i = 1; i < n; i *= 2) {
+        System.out.println(i);
+    }
+    ```
+
+    **C)**
+    ```java
+    for (int i = 0; i < n; i++) {
+        for (int j = i; j < n; j++) {
+            System.out.println(i + j);
+        }
+    }
+    ```
+
+    ??? success "Réponses"
+
+        **A) O(n)**
+
+        La boucle fait n/2 itérations. On ignore la constante 1/2 → O(n).
+
+        **B) O(log n)**
+
+        i prend les valeurs 1, 2, 4, 8, ..., jusqu'à n. C'est 2^k = n, donc k = log₂(n) itérations.
+
+        **C) O(n²)**
+
+        * i = 0 : j fait n itérations
+        * i = 1 : j fait n-1 itérations
+        * ...
+        * i = n-1 : j fait 1 itération
+
+        Total : n + (n-1) + ... + 1 = n(n+1)/2 = **O(n²)**
+
+---
+
+## Rappels théoriques
+
+### L'ADT Pile (Stack)
+
+Une **pile** est une collection d'éléments suivant le principe **LIFO** (*Last-In, First-Out*) :
+
+* Seul l'élément au **sommet** est accessible
+* Les insertions et suppressions se font uniquement au sommet
+* Analogie : une pile d'assiettes ou un distributeur PEZ
+
+| Opération | Description | Complexité |
+| --- | --- | --- |
+| `push(e)` | Ajoute `e` au sommet | O(1) |
+| `pop()` | Retire et retourne le sommet | O(1) |
+| `top()` | Retourne le sommet sans le retirer | O(1) |
+| `size()` | Retourne le nombre d'éléments | O(1) |
+| `isEmpty()` | Vérifie si la pile est vide | O(1) |
+
+### L'ADT File (Queue)
+
+Une **file** est une collection d'éléments suivant le principe **FIFO** (*First-In, First-Out*) :
+
+* Les éléments sont ajoutés à l'**arrière** et retirés à l'**avant**
+* Analogie : une file d'attente au supermarché
+
+| Opération | Description | Complexité |
+| --- | --- | --- |
+| `enqueue(e)` | Ajoute `e` à l'arrière | O(1) |
+| `dequeue()` | Retire et retourne l'élément à l'avant | O(1) |
+| `first()` | Retourne l'avant sans le retirer | O(1) |
+| `size()` | Retourne le nombre d'éléments | O(1) |
+| `isEmpty()` | Vérifie si la file est vide | O(1) |
+
+### L'ADT Deque (Double-Ended Queue)
+
+Un **deque** (prononcé « deck ») permet les insertions et suppressions aux **deux extrémités** :
+
+* Généralise à la fois la pile et la file
+* Peut simuler une pile (utiliser une seule extrémité) ou une file (entrée d'un côté, sortie de l'autre)
+
+| Opération | Description | Complexité |
+| --- | --- | --- |
+| `addFirst(e)` | Ajoute `e` à l'avant | O(1) |
+| `addLast(e)` | Ajoute `e` à l'arrière | O(1) |
+| `removeFirst()` | Retire et retourne l'avant | O(1) |
+| `removeLast()` | Retire et retourne l'arrière | O(1) |
+| `first()` / `last()` | Accesseurs sans suppression | O(1) |
+
+### Files circulaires
+
+Pour implémenter une file avec un tableau, on utilise une **approche circulaire** :
+
+* Deux indices : `front` (avant) et `rear` (arrière)
+* Les indices « bouclent » avec l'opérateur modulo : `(index + 1) % capacity`
+* Évite de décaler tous les éléments lors d'un `dequeue`
+
+**File circulaire** avec `front=2`, `rear=5`, `capacity=8` :
+
+| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|   |   | **A** | B | C |   |   |   |
+|   |   | ↑front |   |   | ↑rear |   |   |
+
+### Liste de favoris et heuristique Move-to-Front
+
+Une **liste de favoris** maintient des éléments ordonnés par fréquence d'accès :
+
+* `access(e)` : accède à l'élément `e`, incrémente son compteur
+* `remove(e)` : supprime `e` de la liste
+* `getFavorites(k)` : retourne les `k` éléments les plus accédés
+
+L'**heuristique move-to-front** est une alternative :
+
+* À chaque accès, l'élément est déplacé au début de la liste
+* Avantage : les éléments récemment accédés sont rapidement accessibles
+* Inconvénient : `getFavorites(k)` devient O(kn) car la liste n'est plus triée par fréquence
+
+---
+
+## Partie 1 — Exercices théoriques
+
+### 1.1 Vrai ou Faux
+
+Pour chaque énoncé, indiquez s'il est **vrai** ou **faux** et justifiez votre réponse.
+
+??? question "Question 1 — Complexité amortie"
+
+    Une pile implémentée avec un tableau dynamique (qui double sa capacité quand il est plein) a toutes ses opérations `push` en O(1) **amorti**.
+
+    ??? success "Réponse"
+
+        **Vrai.** Bien que le redimensionnement occasionnel prenne O(n), il se produit de moins en moins fréquemment. Sur une séquence de n opérations `push`, le coût total est O(n), donc le coût amorti par opération est O(1).
+
+        C'est le même principe que pour `ArrayList.add()` en Java.
+
+??? question "Question 2 — File circulaire vide ou pleine"
+
+    Dans une file circulaire où `front` et `rear` sont des indices, la condition `front == rear` signifie **toujours** que la file est vide.
+
+    ??? success "Réponse"
+
+        **Faux.** C'est une ambiguïté classique des files circulaires ! La condition `front == rear` peut signifier :
+
+        * La file est **vide** (aucun élément)
+        * La file est **pleine** (tous les emplacements utilisés)
+
+        Solutions courantes :
+
+        1. Maintenir un compteur `size` séparé
+        2. Ne jamais remplir complètement le tableau (garder un emplacement vide)
+        3. Utiliser un booléen `isEmpty`
+
+??? question "Question 3 — Deque comme pile et file"
+
+    Un Deque peut être utilisé pour simuler à la fois une pile ET une file.
+
+    ??? success "Réponse"
+
+        **Vrai.** Le Deque est une structure plus générale :
+
+        * **Comme pile** : utiliser `addFirst()`/`removeFirst()` (ou `addLast()`/`removeLast()`)
+        * **Comme file** : utiliser `addLast()`/`removeFirst()`
+
+        C'est pourquoi Java recommande d'utiliser `ArrayDeque` plutôt que `Stack` pour les nouvelles implémentations.
+
+??? question "Question 4 — Move-to-front vs tri par fréquence"
+
+    L'heuristique move-to-front garantit **toujours** une meilleure performance que le maintien d'une liste triée par fréquence d'accès.
+
+    ??? success "Réponse"
+
+        **Faux.** L'heuristique move-to-front est une **heuristique**, pas une garantie.
+
+        * **Avantage** : Si les accès suivent une localité temporelle (éléments récemment accédés susceptibles d'être réaccédés), move-to-front est excellent.
+        * **Inconvénient** : Pour des séquences d'accès uniformément distribuées, move-to-front peut être moins efficace car il perturbe constamment l'ordre.
+
+        De plus, `getFavorites(k)` devient O(kn) avec move-to-front contre O(k) avec une liste triée.
+
+??? question "Question 5 — Pile avec liste chaînée"
+
+    Dans une pile implémentée avec une liste simplement chaînée, les opérations `push` et `pop` doivent se faire à la **fin** de la liste pour être en O(1).
+
+    ??? success "Réponse"
+
+        **Faux.** C'est l'inverse ! Dans une liste **simplement** chaînée :
+
+        * Insertion/suppression au **début** : O(1) — on a une référence directe à `head`
+        * Insertion à la **fin** : O(1) si on maintient `tail`, mais suppression à la fin : O(n) — il faut trouver l'avant-dernier nœud
+
+        Donc pour une pile en O(1), on utilise le **début** de la liste chaînée comme sommet.
+
+??? question "Question 6 — Invalidation après pop"
+
+    Considérez le code suivant :
+    ```java
+    Stack<String> stack = new ArrayStack<>();
+    stack.push("A");
+    stack.push("B");
+    String x = stack.pop();
+    String y = stack.top();
+    // À ce point, x.equals(y) est vrai
+    ```
+
+    ??? success "Réponse"
+
+        **Faux.** Après les opérations :
+
+        1. `push("A")` → pile : `[A]`
+        2. `push("B")` → pile : `[A, B]`
+        3. `pop()` → retourne `"B"`, pile : `[A]`
+        4. `top()` → retourne `"A"`
+
+        Donc `x = "B"` et `y = "A"`, et `x.equals(y)` est **faux**.
+
+---
+
+### 1.2 Questions à choix multiples
+
+??? question "Question 7 — Trace d'exécution d'une pile"
+
+    Considérez une pile initialement vide. On exécute les opérations suivantes :
+
+    ```
+    push(1), push(2), pop(), push(3), push(4), pop(), pop(), push(5)
+    ```
+
+    Quel est le contenu de la pile après ces opérations (du bas vers le haut) ?
+
+    - [ ] A) `[1, 5]`
+    - [ ] B) `[1, 3, 5]`
+    - [ ] C) `[1, 2, 5]`
+    - [ ] D) `[5]`
+
+    ??? success "Réponse"
+
+        **A) `[1, 5]`**
+
+        Traçons les opérations :
+
+        1. `push(1)` → `[1]`
+        2. `push(2)` → `[1, 2]`
+        3. `pop()` → retourne 2, pile : `[1]`
+        4. `push(3)` → `[1, 3]`
+        5. `push(4)` → `[1, 3, 4]`
+        6. `pop()` → retourne 4, pile : `[1, 3]`
+        7. `pop()` → retourne 3, pile : `[1]`
+        8. `push(5)` → `[1, 5]`
+
+??? question "Question 8 — Trace d'exécution d'une file"
+
+    Considérez une file initialement vide. On exécute les opérations suivantes :
+
+    ```
+    enqueue(A), enqueue(B), dequeue(), enqueue(C), dequeue(), enqueue(D)
+    ```
+
+    Quel est le contenu de la file (de l'avant vers l'arrière) ?
+
+    - [ ] A) `[A, D]`
+    - [ ] B) `[C, D]`
+    - [ ] C) `[B, C, D]`
+    - [ ] D) `[D]`
+
+    ??? success "Réponse"
+
+        **B) `[C, D]`**
+
+        Traçons les opérations :
+
+        1. `enqueue(A)` → `[A]`
+        2. `enqueue(B)` → `[A, B]`
+        3. `dequeue()` → retourne A, file : `[B]`
+        4. `enqueue(C)` → `[B, C]`
+        5. `dequeue()` → retourne B, file : `[C]`
+        6. `enqueue(D)` → `[C, D]`
+
+??? question "Question 9 — Indices d'une file circulaire"
+
+    Une file circulaire de capacité 6 a actuellement `front = 4` et contient 3 éléments. Quelle est la valeur de `rear` (l'index où le prochain élément sera ajouté) ?
+
+    - [ ] A) 0
+    - [ ] B) 1
+    - [ ] C) 6
+    - [ ] D) 7
+
+    ??? success "Réponse"
+
+        **B) 1**
+
+        Les 3 éléments occupent les indices 4, 5 et 0 (bouclage circulaire car après l'index 5, on revient à 0).
+
+        Calcul : `rear = (front + size) % capacity = (4 + 3) % 6 = 7 % 6 = 1`
+
+        | 0 | 1 | 2 | 3 | 4 | 5 |
+        |:-:|:-:|:-:|:-:|:-:|:-:|
+        | C |   |   |   | **A** | B |
+        | (wrap) | ↑rear |   |   | ↑front |   |
+
+        L'ordre logique de la file est : A (front) → B → C → [rear = prochain ajout à l'index 1]
+
+??? question "Question 10 — Complexité de getFavorites"
+
+    Dans une `FavoritesListMTF` (move-to-front) contenant n éléments, quelle est la complexité de `getFavorites(k)` ?
+
+    - [ ] A) O(k)
+    - [ ] B) O(n)
+    - [ ] C) O(kn)
+    - [ ] D) O(n log n)
+
+    ??? success "Réponse"
+
+        **C) O(kn)**
+
+        Avec move-to-front, la liste n'est **pas triée** par fréquence d'accès. Pour trouver les k éléments les plus accédés :
+
+        1. On doit parcourir toute la liste pour trouver le maximum → O(n)
+        2. On répète k fois → O(kn)
+
+        Avec une liste triée par fréquence, ce serait O(k) car les k premiers sont déjà les plus accédés.
+
+---
+
+### 1.3 Questions de réflexion
+
+??? question "Question 11 — Pourquoi une file circulaire ?"
+
+    On veut implémenter une file avec un tableau. Comparez deux approches :
+
+    **Approche A (naïve)** : `front` est toujours à l'index 0. Après chaque `dequeue`, on décale tous les éléments vers la gauche.
+
+    **Approche B (circulaire)** : On maintient un index `front` qui avance avec l'opérateur modulo, sans décaler les éléments.
+
+    Expliquez pourquoi l'approche B est préférable et quel est le gain en complexité.
+
+    ??? success "Réponse"
+
+        **Problème de l'approche A :**
+
+        Après un `dequeue`, il faut décaler tous les éléments restants d'une position vers la gauche pour que l'index 0 reste l'avant de la file. Ce décalage prend **O(n)** à chaque suppression.
+
+        ```
+        Avant dequeue:  [A, B, C, D, _, _]
+        Après dequeue:  [B, C, D, _, _, _]  ← décalage de 3 éléments : O(n)
+        ```
+
+        **Avantage de l'approche B (circulaire) :**
+
+        On incrémente simplement l'index `front` (avec modulo pour boucler). Aucun décalage nécessaire → **O(1)**.
+
+        ```
+        Avant dequeue: front=0  [A, B, C, D, _, _]
+        Après dequeue: front=1  [_, B, C, D, _, _]  ← juste front++ : O(1)
+        ```
+
+        **Gain :** On passe de O(n) à O(1) pour l'opération `dequeue`, ce qui est crucial pour une file utilisée fréquemment.
+
+??? question "Question 12 — Pile et récursion"
+
+    La récursion et les piles sont étroitement liées. Expliquez ce lien et donnez un exemple de conversion d'un algorithme récursif en algorithme itératif avec pile.
+
+    ??? success "Réponse"
+
+        **Le lien :**
+
+        Chaque appel récursif utilise la **pile d'appels** (call stack) du système :
+
+        * Les paramètres et variables locales sont empilés
+        * Au retour, ils sont dépilés
+
+        **Conversion récursif → itératif :**
+
+        Prenons le parcours d'un arbre en profondeur (DFS) :
+
+        ```java
+        // Version récursive
+        void dfsRecursive(Node node) {
+            if (node == null) return;
+            visit(node);
+            dfsRecursive(node.left);
+            dfsRecursive(node.right);
+        }
+
+        // Version itérative avec pile explicite
+        void dfsIterative(Node root) {
+            Stack<Node> stack = new ArrayStack<>();
+            stack.push(root);
+            while (!stack.isEmpty()) {
+                Node node = stack.pop();
+                if (node == null) continue;
+                visit(node);
+                stack.push(node.right);  // right d'abord car LIFO
+                stack.push(node.left);
+            }
+        }
+        ```
+
+        **Avantages de la version itérative :** Évite les débordements de pile (stack overflow) pour les structures très profondes.
+
+??? question "Question 13 — Move-to-front et localité temporelle"
+
+    Expliquez ce qu'est la **localité temporelle** et pourquoi l'heuristique move-to-front en tire avantage.
+
+    ??? success "Réponse"
+
+        **Localité temporelle :**
+
+        Principe selon lequel un élément récemment accédé a de fortes chances d'être accédé à nouveau dans un futur proche. Exemples :
+
+        * Pages web récemment visitées
+        * Fichiers récemment ouverts
+        * Variables récemment utilisées (cache CPU)
+
+        **Move-to-front en tire avantage :**
+
+        En déplaçant chaque élément accédé au début de la liste :
+
+        * Les éléments « chauds » (fréquemment accédés récemment) sont près du début
+        * Les recherches futures pour ces éléments sont rapides (O(1) à O(k) pour les k premiers)
+        * Les éléments « froids » migrent naturellement vers la fin
+
+        **Analogie :** C'est similaire au cache LRU (Least Recently Used) utilisé dans les systèmes d'exploitation et les bases de données.
+
+??? question "Question 14 — Notations infixe, préfixe et postfixe"
+
+    Les expressions arithmétiques peuvent s'écrire en trois notations :
+
+    | Notation | Exemple pour (3 + 4) × 5 |
+    |----------|--------------------------|
+    | **Infixe** (standard) | `(3 + 4) * 5` |
+    | **Préfixe** (polonaise) | `* + 3 4 5` |
+    | **Postfixe** (polonaise inverse) | `3 4 + 5 *` |
+
+    1. Pourquoi les notations préfixe et postfixe n'ont-elles pas besoin de parenthèses ?
+    2. Quelle structure de données est utilisée pour évaluer une expression postfixe ? Pourquoi ?
+    3. Quelle structure serait appropriée pour convertir une expression infixe en postfixe ?
+
+    ??? success "Réponse"
+
+        **1. Pas besoin de parenthèses :**
+
+        En notation préfixe/postfixe, la position de l'opérateur par rapport aux opérandes détermine **sans ambiguïté** l'ordre des opérations. Il n'y a pas besoin de parenthèses ni de règles de priorité.
+
+        * Infixe : `3 + 4 * 5` → ambigu sans règles (est-ce 35 ou 23 ?)
+        * Postfixe : `3 4 5 * +` = 3 + (4×5) = 23
+        * Postfixe : `3 4 + 5 *` = (3+4) × 5 = 35
+
+        **2. Évaluation postfixe → Pile**
+
+        On utilise une **pile** car on traite les opérandes dans l'ordre LIFO :
+
+        ```
+        Expression : 3 4 + 5 *
+
+        Lecture | Action              | Pile
+        --------|---------------------|--------
+        3       | push(3)             | [3]
+        4       | push(4)             | [3, 4]
+        +       | pop 4, pop 3        | []
+                | push(3+4=7)         | [7]
+        5       | push(5)             | [7, 5]
+        *       | pop 5, pop 7        | []
+                | push(7*5=35)        | [35]
+
+        Résultat : 35
+        ```
+
+        Les deux opérandes les plus récemment empilés sont ceux qui doivent être combinés → comportement LIFO parfait pour la pile.
+
+        **3. Conversion infixe → postfixe → Pile (algorithme Shunting-yard)**
+
+        On utilise aussi une **pile** (pour les opérateurs) dans l'algorithme de Dijkstra :
+
+        * Les opérandes vont directement en sortie
+        * Les opérateurs sont empilés, puis dépilés selon leur priorité
+        * Les parenthèses ouvrantes sont empilées, les fermantes déclenchent le dépilement
+
+        La pile permet de « retenir » les opérateurs de basse priorité jusqu'à ce que ceux de haute priorité soient traités.
+
+---
+
+## Partie 2 — Implémentation d'une pile
+
+### 2.1 Comprendre la structure
+
+Une pile peut être implémentée de deux façons principales :
+
+**Pile avec tableau** (sommet à droite, `t=3`) :
+
+| Index | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Valeur | A | B | C | **D (top)** |  |  |  |  |
+
+**Pile avec liste chaînée** (sommet = head) :
+
+<div class="ift-diagram" role="img" aria-label="Pile avec liste chainee: top, D, C, B, A, null">
+  <div class="ift-diagram__node ift-diagram__node--label">top</div>
+  <span class="ift-diagram__arrow" aria-hidden="true"></span>
+  <div class="ift-diagram__node ift-diagram__node--top">D</div>
+  <span class="ift-diagram__arrow" aria-hidden="true"></span>
+  <div class="ift-diagram__node">C</div>
+  <span class="ift-diagram__arrow" aria-hidden="true"></span>
+  <div class="ift-diagram__node">B</div>
+  <span class="ift-diagram__arrow" aria-hidden="true"></span>
+  <div class="ift-diagram__node">A</div>
+  <span class="ift-diagram__arrow" aria-hidden="true"></span>
+  <div class="ift-diagram__node ift-diagram__node--null">null</div>
+</div>
+
+Voici l'interface de la pile :
+
+```java
+public interface Stack<E> {
+    int size();
+    boolean isEmpty();
+    void push(E e);
+    E top();
+    E pop();
+}
+```
+
+---
+
+### 2.2 Implémentation avec tableau
+
+??? example "Exercice 2.2.1 — ArrayStack"
+
+    Implémentez une pile avec un tableau de capacité fixe.
+
+    ```java
+    public class ArrayStack<E> implements Stack<E> {
+        public static final int CAPACITY = 1000;
+        private E[] data;
+        private int t = -1;  // index du sommet (-1 = vide)
+
+        // À implémenter :
+        // Constructeur, size(), isEmpty(), push(e), top(), pop()
+    }
+    ```
+
+    ??? success "Solution"
+
+        ```java
+        public class ArrayStack<E> implements Stack<E> {
+            public static final int CAPACITY = 1000;
+            private E[] data;
+            private int t = -1;
+
+            public ArrayStack() {
+                this(CAPACITY);
+            }
+
+            @SuppressWarnings("unchecked")
+            public ArrayStack(int capacity) {
+                data = (E[]) new Object[capacity];
+            }
+
+            public int size() {
+                return t + 1;
+            }
+
+            public boolean isEmpty() {
+                return t == -1;
+            }
+
+            public void push(E e) throws IllegalStateException {
+                if (size() == data.length)
+                    throw new IllegalStateException("Stack is full");
+                data[++t] = e;  // incrémente t PUIS stocke
+            }
+
+            public E top() {
+                if (isEmpty()) return null;
+                return data[t];
+            }
+
+            public E pop() {
+                if (isEmpty()) return null;
+                E answer = data[t];
+                data[t] = null;  // aide le garbage collector
+                t--;
+                return answer;
+            }
+        }
+        ```
+
+        **Points clés :**
+
+        * `++t` dans `push` : incrémente d'abord, puis utilise la nouvelle valeur
+        * `data[t] = null` dans `pop` : évite les fuites mémoire (références obsolètes)
+
+---
+
+### 2.3 Implémentation avec liste chaînée
+
+??? example "Exercice 2.3.1 — LinkedStack"
+
+    Implémentez une pile avec une liste simplement chaînée. Le sommet est la tête de la liste.
+
+    ```java
+    public class LinkedStack<E> implements Stack<E> {
+
+        private static class Node<E> {
+            private E element;
+            private Node<E> next;
+
+            public Node(E e, Node<E> n) {
+                element = e;
+                next = n;
+            }
+            // getters...
+        }
+
+        private Node<E> top = null;
+        private int size = 0;
+
+        // À implémenter...
+    }
+    ```
+
+    ??? success "Solution"
+
+        ```java
+        public class LinkedStack<E> implements Stack<E> {
+
+            private static class Node<E> {
+                private E element;
+                private Node<E> next;
+
+                public Node(E e, Node<E> n) {
+                    element = e;
+                    next = n;
+                }
+
+                public E getElement() { return element; }
+                public Node<E> getNext() { return next; }
+            }
+
+            private Node<E> top = null;
+            private int size = 0;
+
+            public int size() { return size; }
+
+            public boolean isEmpty() { return size == 0; }
+
+            public void push(E e) {
+                top = new Node<>(e, top);  // nouveau nœud pointe vers l'ancien sommet
+                size++;
+            }
+
+            public E top() {
+                if (isEmpty()) return null;
+                return top.getElement();
+            }
+
+            public E pop() {
+                if (isEmpty()) return null;
+                E answer = top.getElement();
+                top = top.getNext();  // le sommet devient le suivant
+                size--;
+                return answer;
+            }
+        }
+        ```
+
+        **Avantage sur ArrayStack :** Pas de limite de capacité, pas besoin de redimensionnement.
+
+---
+
+## Partie 3 — Implémentation d'une file
+
+### 3.1 Comprendre la file circulaire
+
+**File circulaire de capacité 8 avec 4 éléments :**
+
+| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|   |   | **A** | B | C | D |   |   |
+|   |   | ↑front |   |   |   | ↑rear |   |
+
+**Après `enqueue(E)` :**
+
+| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|   |   | **A** | B | C | D | E |   |
+|   |   | ↑front |   |   |   |   | ↑rear |
+
+**Après `dequeue()` (retourne A) :**
+
+| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|   |   |   | **B** | C | D | E |   |
+|   |   |   | ↑front |   |   |   | ↑rear |
+
+L'interface de la file :
+
+```java
+public interface Queue<E> {
+    int size();
+    boolean isEmpty();
+    void enqueue(E e);
+    E first();
+    E dequeue();
+}
+```
+
+---
+
+### 3.2 Implémentation avec tableau circulaire
+
+??? example "Exercice 3.2.1 — ArrayQueue"
+
+    Implémentez une file avec un tableau circulaire. Utilisez l'opérateur modulo pour le bouclage.
+
+    ```java
+    public class ArrayQueue<E> implements Queue<E> {
+        public static final int CAPACITY = 1000;
+        private E[] data;
+        private int front = 0;
+        private int size = 0;
+
+        // À implémenter...
+        // Note : rear = (front + size) % data.length
+    }
+    ```
+
+    ??? success "Solution"
+
+        ```java
+        public class ArrayQueue<E> implements Queue<E> {
+            public static final int CAPACITY = 1000;
+            private E[] data;
+            private int front = 0;
+            private int size = 0;
+
+            public ArrayQueue() {
+                this(CAPACITY);
+            }
+
+            @SuppressWarnings("unchecked")
+            public ArrayQueue(int capacity) {
+                data = (E[]) new Object[capacity];
+            }
+
+            public int size() { return size; }
+
+            public boolean isEmpty() { return size == 0; }
+
+            public void enqueue(E e) throws IllegalStateException {
+                if (size == data.length)
+                    throw new IllegalStateException("Queue is full");
+                int rear = (front + size) % data.length;
+                data[rear] = e;
+                size++;
+            }
+
+            public E first() {
+                if (isEmpty()) return null;
+                return data[front];
+            }
+
+            public E dequeue() {
+                if (isEmpty()) return null;
+                E answer = data[front];
+                data[front] = null;  // aide GC
+                front = (front + 1) % data.length;  // avance circulairement
+                size--;
+                return answer;
+            }
+        }
+        ```
+
+        **Points clés :**
+
+        * On maintient `size` plutôt que `rear` pour éviter l'ambiguïté vide/plein
+        * `(front + 1) % data.length` assure le bouclage circulaire
+
+---
+
+### 3.3 Implémentation avec liste chaînée
+
+??? example "Exercice 3.3.1 — LinkedQueue"
+
+    Implémentez une file avec une liste simplement chaînée. Maintenez une référence vers `head` (avant) et `tail` (arrière).
+
+    ??? success "Solution"
+
+        ```java
+        public class LinkedQueue<E> implements Queue<E> {
+
+            private static class Node<E> {
+                private E element;
+                private Node<E> next;
+
+                public Node(E e, Node<E> n) {
+                    element = e;
+                    next = n;
+                }
+
+                public E getElement() { return element; }
+                public Node<E> getNext() { return next; }
+                public void setNext(Node<E> n) { next = n; }
+            }
+
+            private Node<E> head = null;
+            private Node<E> tail = null;
+            private int size = 0;
+
+            public int size() { return size; }
+
+            public boolean isEmpty() { return size == 0; }
+
+            public void enqueue(E e) {
+                Node<E> newest = new Node<>(e, null);
+                if (isEmpty())
+                    head = newest;
+                else
+                    tail.setNext(newest);
+                tail = newest;
+                size++;
+            }
+
+            public E first() {
+                if (isEmpty()) return null;
+                return head.getElement();
+            }
+
+            public E dequeue() {
+                if (isEmpty()) return null;
+                E answer = head.getElement();
+                head = head.getNext();
+                size--;
+                if (isEmpty())
+                    tail = null;  // la file est maintenant vide
+                return answer;
+            }
+        }
+        ```
+
+        **Attention au cas limite :** Quand la file devient vide après un `dequeue`, il faut aussi mettre `tail = null`.
+
+---
+
+## Partie 4 — Implémentation d'un Deque
+
+### 4.1 Interface et structure
+
+```java
+public interface Deque<E> {
+    int size();
+    boolean isEmpty();
+    E first();
+    E last();
+    void addFirst(E e);
+    void addLast(E e);
+    E removeFirst();
+    E removeLast();
+}
+```
+
+Un Deque peut être implémenté avec :
+
+* Un **tableau circulaire** (similaire à `ArrayQueue` mais avec ajout/suppression aux deux bouts)
+* Une **liste doublement chaînée** (accès O(1) aux deux extrémités)
+
+??? example "Exercice 4.1.1 — DoublyLinkedDeque"
+
+    Implémentez un Deque avec une liste doublement chaînée avec sentinelles.
+
+    **Indice :** Réutilisez la structure de la liste positionnelle de la Démo 2, mais exposez seulement les opérations aux extrémités.
+
+    ??? success "Solution"
+
+        ```java
+        public class LinkedDeque<E> implements Deque<E> {
+
+            private static class Node<E> {
+                private E element;
+                private Node<E> prev;
+                private Node<E> next;
+
+                public Node(E e, Node<E> p, Node<E> n) {
+                    element = e;
+                    prev = p;
+                    next = n;
+                }
+                // getters et setters...
+            }
+
+            private Node<E> header;
+            private Node<E> trailer;
+            private int size = 0;
+
+            public LinkedDeque() {
+                header = new Node<>(null, null, null);
+                trailer = new Node<>(null, header, null);
+                header.next = trailer;
+            }
+
+            public int size() { return size; }
+            public boolean isEmpty() { return size == 0; }
+
+            public E first() {
+                if (isEmpty()) return null;
+                return header.next.element;
+            }
+
+            public E last() {
+                if (isEmpty()) return null;
+                return trailer.prev.element;
+            }
+
+            // Méthode utilitaire privée
+            private void addBetween(E e, Node<E> pred, Node<E> succ) {
+                Node<E> newest = new Node<>(e, pred, succ);
+                pred.next = newest;
+                succ.prev = newest;
+                size++;
+            }
+
+            public void addFirst(E e) {
+                addBetween(e, header, header.next);
+            }
+
+            public void addLast(E e) {
+                addBetween(e, trailer.prev, trailer);
+            }
+
+            // Méthode utilitaire privée
+            private E remove(Node<E> node) {
+                Node<E> pred = node.prev;
+                Node<E> succ = node.next;
+                pred.next = succ;
+                succ.prev = pred;
+                size--;
+                return node.element;
+            }
+
+            public E removeFirst() {
+                if (isEmpty()) return null;
+                return remove(header.next);
+            }
+
+            public E removeLast() {
+                if (isEmpty()) return null;
+                return remove(trailer.prev);
+            }
+        }
+        ```
+
+---
+
+## Partie 5 — Liste de favoris
+
+### 5.1 Comprendre la structure
+
+Une liste de favoris maintient des éléments avec leur **compteur d'accès** :
+
+**FavoritesList** après `access(A), access(B), access(A), access(C), access(A)` :
+
+<div class="ift-diagram" role="img" aria-label="FavoritesList: A count 3, B count 1, C count 1">
+  <div class="ift-diagram__node ift-diagram__node--head">
+    <div class="ift-diagram__title">A</div>
+    <div class="ift-diagram__meta">count = 3 *</div>
+  </div>
+  <span class="ift-diagram__arrow" aria-hidden="true"></span>
+  <div class="ift-diagram__node">
+    <div class="ift-diagram__title">B</div>
+    <div class="ift-diagram__meta">count = 1</div>
+  </div>
+  <span class="ift-diagram__arrow" aria-hidden="true"></span>
+  <div class="ift-diagram__node">
+    <div class="ift-diagram__title">C</div>
+    <div class="ift-diagram__meta">count = 1</div>
+  </div>
+</div>
+
+*L'élément A est le plus accédé (3 accès) et se trouve en tête de liste.*
+
+### 5.2 Implémentation de base
+
+??? example "Exercice 5.2.1 — Classe Item interne"
+
+    Créez une classe interne `Item` qui stocke un élément et son compteur d'accès.
+
+    ??? success "Solution"
+
+        ```java
+        protected static class Item<E> {
+            private E value;
+            private int count = 0;
+
+            public Item(E val) {
+                value = val;
+            }
+
+            public int getCount() { return count; }
+            public E getValue() { return value; }
+            public void increment() { count++; }
+        }
+        ```
+
+??? example "Exercice 5.2.2 — Méthode access(e)"
+
+    Implémentez la méthode `access(E e)` qui :
+
+    1. Cherche l'élément dans la liste
+    2. S'il existe, incrémente son compteur
+    3. Sinon, l'ajoute avec un compteur de 1
+    4. Déplace l'élément pour maintenir l'ordre décroissant des compteurs
+
+    ??? success "Solution"
+
+        ```java
+        public class FavoritesList<E> {
+            protected PositionalList<Item<E>> list = new LinkedPositionalList<>();
+
+            protected Position<Item<E>> findPosition(E e) {
+                Position<Item<E>> walk = list.first();
+                while (walk != null && !walk.getElement().getValue().equals(e))
+                    walk = list.after(walk);
+                return walk;
+            }
+
+            protected void moveUp(Position<Item<E>> p) {
+                int cnt = p.getElement().getCount();
+                Position<Item<E>> walk = p;
+                while (walk != list.first() &&
+                       list.before(walk).getElement().getCount() < cnt)
+                    walk = list.before(walk);
+                if (walk != p)
+                    list.addBefore(walk, list.remove(p));
+            }
+
+            public void access(E e) {
+                Position<Item<E>> p = findPosition(e);
+                if (p == null)
+                    p = list.addLast(new Item<E>(e));
+                p.getElement().increment();
+                moveUp(p);
+            }
+        }
+        ```
+
+??? example "Exercice 5.2.3 — Méthode getFavorites(k)"
+
+    Implémentez `getFavorites(int k)` qui retourne les k éléments les plus accédés.
+
+    ??? success "Solution"
+
+        ```java
+        public Iterable<E> getFavorites(int k) throws IllegalArgumentException {
+            if (k < 0 || k > size())
+                throw new IllegalArgumentException("Invalid k");
+
+            List<E> result = new ArrayList<>();
+            Iterator<Item<E>> iter = list.iterator();
+            for (int i = 0; i < k; i++) {
+                result.add(iter.next().getValue());
+            }
+            return result;
+        }
+        ```
+
+        Comme la liste est triée par compteur décroissant, les k premiers sont les favoris !
+
+---
+
+### 5.3 Move-to-front heuristic
+
+??? example "Exercice 5.3.1 — FavoritesListMTF"
+
+    Créez une sous-classe `FavoritesListMTF` qui surcharge `moveUp` pour déplacer l'élément au début plutôt que de maintenir l'ordre trié.
+
+    ??? success "Solution"
+
+        ```java
+        public class FavoritesListMTF<E> extends FavoritesList<E> {
+
+            @Override
+            protected void moveUp(Position<Item<E>> p) {
+                if (p != list.first())
+                    list.addFirst(list.remove(p));
+            }
+
+            @Override
+            public Iterable<E> getFavorites(int k) throws IllegalArgumentException {
+                if (k < 0 || k > size())
+                    throw new IllegalArgumentException("Invalid k");
+
+                // Copier dans une liste temporaire
+                PositionalList<Item<E>> temp = new LinkedPositionalList<>();
+                for (Item<E> item : list)
+                    temp.addLast(item);
+
+                // Trouver les k maximums
+                List<E> result = new ArrayList<>();
+                for (int i = 0; i < k; i++) {
+                    Position<Item<E>> maxPos = temp.first();
+                    for (Position<Item<E>> walk = temp.after(maxPos);
+                         walk != null;
+                         walk = temp.after(walk)) {
+                        if (walk.getElement().getCount() > maxPos.getElement().getCount())
+                            maxPos = walk;
+                    }
+                    result.add(maxPos.getElement().getValue());
+                    temp.remove(maxPos);
+                }
+                return result;
+            }
+        }
+        ```
+
+        **Complexité de getFavorites(k) :** O(kn) — on parcourt la liste k fois pour trouver chaque maximum.
+
+---
+
+## Partie 6 — Files et concurrence (Introduction)
+
+### 6.1 Le problème
+
+Quand plusieurs **threads** accèdent à une file partagée, des problèmes surviennent :
+
+```java
+// Thread 1                    // Thread 2
+queue.enqueue("A");            queue.enqueue("B");
+```
+
+Sans synchronisation, les deux threads peuvent modifier `size` ou `rear` simultanément, corrompant la structure.
+
+### 6.2 Conditions de course (Race Conditions)
+
+??? example "Exercice 6.2.1 — Identifier le problème"
+
+    Considérez cette implémentation simplifiée de `enqueue` :
+
+    ```java
+    public void enqueue(E e) {
+        int rear = (front + size) % data.length;  // Ligne 1
+        data[rear] = e;                            // Ligne 2
+        size++;                                    // Ligne 3
+    }
+    ```
+
+    Si deux threads T1 et T2 appellent `enqueue` simultanément avec `size = 5` et `front = 0`, que peut-il se passer ?
+
+    ??? success "Réponse"
+
+        **Scénario problématique :**
+
+        1. T1 exécute Ligne 1 : `rear = 5`
+        2. T2 exécute Ligne 1 : `rear = 5` (même valeur car `size` n'a pas changé !)
+        3. T1 exécute Ligne 2 : `data[5] = "A"`
+        4. T2 exécute Ligne 2 : `data[5] = "B"` (écrase "A" !)
+        5. T1 exécute Ligne 3 : `size = 6`
+        6. T2 exécute Ligne 3 : `size = 7`
+
+        **Résultat :** "A" est perdu, et `size` est incorrectement incrémenté deux fois alors qu'un seul élément a été effectivement ajouté à une position valide.
+
+---
+
+### 6.3 Solutions en Java
+
+#### Synchronized
+
+```java
+public synchronized void enqueue(E e) {
+    // Un seul thread peut exécuter ce bloc à la fois
+    int rear = (front + size) % data.length;
+    data[rear] = e;
+    size++;
+}
+
+public synchronized E dequeue() {
+    // ...
+}
+```
+
+#### BlockingQueue
+
+Java fournit des files thread-safe dans `java.util.concurrent` :
+
+```java
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+
+BlockingQueue<String> queue = new ArrayBlockingQueue<>(100);
+
+// Thread producteur
+queue.put("item");  // Bloque si plein
+
+// Thread consommateur
+String item = queue.take();  // Bloque si vide
+```
+
+??? example "Exercice 6.3.1 — Producteur-Consommateur"
+
+    Complétez ce programme de simulation producteur-consommateur :
+
+    ```java
+    public class ProducerConsumer {
+        public static void main(String[] args) {
+            BlockingQueue<Integer> queue = new ArrayBlockingQueue<>(5);
+
+            // Producteur : ajoute les nombres 1 à 10
+            Thread producer = new Thread(() -> {
+                // À compléter
+            });
+
+            // Consommateur : retire et affiche les éléments
+            Thread consumer = new Thread(() -> {
+                // À compléter
+            });
+
+            producer.start();
+            consumer.start();
+        }
+    }
+    ```
+
+    ??? success "Solution"
+
+        ```java
+        public class ProducerConsumer {
+            public static void main(String[] args) {
+                BlockingQueue<Integer> queue = new ArrayBlockingQueue<>(5);
+
+                Thread producer = new Thread(() -> {
+                    try {
+                        for (int i = 1; i <= 10; i++) {
+                            System.out.println("Producing: " + i);
+                            queue.put(i);  // Bloque si la file est pleine
+                            Thread.sleep(100);  // Simule du travail
+                        }
+                        queue.put(-1);  // Signal de fin
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                });
+
+                Thread consumer = new Thread(() -> {
+                    try {
+                        while (true) {
+                            Integer item = queue.take();  // Bloque si vide
+                            if (item == -1) break;  // Signal de fin
+                            System.out.println("Consuming: " + item);
+                            Thread.sleep(150);  // Consommateur plus lent
+                        }
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                });
+
+                producer.start();
+                consumer.start();
+            }
+        }
+        ```
+
+        **Observation :** Le producteur sera parfois bloqué car la file (capacité 5) se remplit plus vite qu'elle ne se vide.
+
+---
+
+## Applications pratiques
+
+### Application 1 : Vérification de parenthèses
+
+??? example "Exercice — Parenthèses équilibrées"
+
+    Implémentez une méthode qui vérifie si une chaîne contient des parenthèses bien équilibrées.
+
+    Exemples :
+
+    * `"((()))"` → true
+    * `"({[]})"` → true
+    * `"(()"` → false
+    * `"([)]"` → false
+
+    ??? success "Solution"
+
+        ```java
+        public static boolean isMatched(String expression) {
+            final String opening = "({[";
+            final String closing = ")}]";
+            Stack<Character> buffer = new ArrayStack<>();
+
+            for (char c : expression.toCharArray()) {
+                if (opening.indexOf(c) != -1) {
+                    buffer.push(c);
+                } else if (closing.indexOf(c) != -1) {
+                    if (buffer.isEmpty()) return false;
+                    if (closing.indexOf(c) != opening.indexOf(buffer.pop()))
+                        return false;
+                }
+            }
+            return buffer.isEmpty();
+        }
+        ```
+
+---
+
+### Application 2 : Évaluation d'expression postfixe
+
+??? example "Exercice — Calculatrice postfixe"
+
+    Évaluez une expression en notation postfixe (polonaise inverse).
+
+    Exemple : `"3 4 + 5 *"` = (3 + 4) × 5 = 35
+
+    ??? success "Solution"
+
+        ```java
+        public static int evaluatePostfix(String expr) {
+            Stack<Integer> stack = new ArrayStack<>();
+            String[] tokens = expr.split(" ");
+
+            for (String token : tokens) {
+                if (token.matches("-?\\d+")) {
+                    stack.push(Integer.parseInt(token));
+                } else {
+                    int b = stack.pop();
+                    int a = stack.pop();
+                    switch (token) {
+                        case "+": stack.push(a + b); break;
+                        case "-": stack.push(a - b); break;
+                        case "*": stack.push(a * b); break;
+                        case "/": stack.push(a / b); break;
+                    }
+                }
+            }
+            return stack.pop();
+        }
+        ```
+
+---
+
+### Application 3 : Simulation Round-Robin
+
+??? example "Exercice — Ordonnanceur de processus"
+
+    Simulez un ordonnanceur round-robin où chaque processus reçoit un quantum de temps fixe.
+
+    ??? success "Solution"
+
+        ```java
+        public static void roundRobinScheduler(String[] processes, int quantum) {
+            Queue<String> queue = new ArrayQueue<>();
+            int[] remainingTime = {10, 5, 8};  // Temps restant pour chaque processus
+
+            for (String p : processes)
+                queue.enqueue(p);
+
+            int time = 0;
+            while (!queue.isEmpty()) {
+                String current = queue.dequeue();
+                int idx = current.charAt(1) - '1';  // P1 → 0, P2 → 1, etc.
+
+                int executeTime = Math.min(quantum, remainingTime[idx]);
+                time += executeTime;
+                remainingTime[idx] -= executeTime;
+
+                System.out.println("Time " + time + ": " + current +
+                                   " executed for " + executeTime + "ms");
+
+                if (remainingTime[idx] > 0) {
+                    queue.enqueue(current);  // Remet dans la file
+                } else {
+                    System.out.println(current + " completed!");
+                }
+            }
+        }
+        ```
+
+---
+
+## Exercices supplémentaires
+
+??? tip "Défi 1 — Implémenter une pile avec deux files"
+
+    Implémentez une pile en utilisant uniquement deux files. Analysez la complexité.
+
+    ??? success "Solution"
+
+        ```java
+        public class StackWithQueues<E> implements Stack<E> {
+            private Queue<E> q1 = new LinkedQueue<>();
+            private Queue<E> q2 = new LinkedQueue<>();
+
+            public void push(E e) {
+                q1.enqueue(e);
+            }
+
+            public E pop() {
+                if (q1.isEmpty()) return null;
+
+                // Déplacer tout sauf le dernier vers q2
+                while (q1.size() > 1) {
+                    q2.enqueue(q1.dequeue());
+                }
+                E result = q1.dequeue();
+
+                // Échanger q1 et q2
+                Queue<E> temp = q1;
+                q1 = q2;
+                q2 = temp;
+
+                return result;
+            }
+
+            // ... autres méthodes
+        }
+        ```
+
+        **Complexité :** `push` = O(1), `pop` = O(n)
+
+??? tip "Défi 2 — Détecter un palindrome avec un Deque"
+
+    Utilisez un Deque pour vérifier si une chaîne est un palindrome.
+
+    ??? success "Solution"
+
+        ```java
+        public static boolean isPalindrome(String s) {
+            Deque<Character> deque = new LinkedDeque<>();
+
+            // Ajouter les caractères (en ignorant espaces et casse)
+            for (char c : s.toLowerCase().toCharArray()) {
+                if (Character.isLetterOrDigit(c))
+                    deque.addLast(c);
+            }
+
+            // Comparer des deux côtés
+            while (deque.size() > 1) {
+                if (!deque.removeFirst().equals(deque.removeLast()))
+                    return false;
+            }
+            return true;
+        }
+        ```
+
+??? tip "Défi 3 — MinStack"
+
+    Implémentez une pile qui supporte `getMin()` en O(1) en plus des opérations standard.
+
+    ??? success "Solution"
+
+        ```java
+        public class MinStack {
+            private Stack<Integer> stack = new ArrayStack<>();
+            private Stack<Integer> minStack = new ArrayStack<>();
+
+            public void push(int x) {
+                stack.push(x);
+                if (minStack.isEmpty() || x <= minStack.top())
+                    minStack.push(x);
+            }
+
+            public int pop() {
+                int val = stack.pop();
+                if (val == minStack.top())
+                    minStack.pop();
+                return val;
+            }
+
+            public int top() {
+                return stack.top();
+            }
+
+            public int getMin() {
+                return minStack.top();
+            }
+        }
+        ```
+
+        **Idée :** Maintenir une pile auxiliaire qui stocke les minimums actuels.
+
+---
+
+## Résumé
+
+| Structure | Politique | push/enqueue | pop/dequeue | Accès autre extrémité | Cas d'usage typique |
+| --- | --- | --- | --- | --- | --- |
+| **Pile (Stack)** | LIFO | O(1) | O(1) | ✗ | Undo, parsing, DFS |
+| **File (Queue)** | FIFO | O(1) | O(1) | ✗ | BFS, scheduling, buffers |
+| **Deque** | Les deux | O(1) | O(1) | O(1) | Undo/Redo, sliding window |
+| **FavoritesList** | Par fréquence | O(n) | O(n) | O(k) | Recommandations |
+| **FavoritesListMTF** | Move-to-front | O(n) | O(n) | O(kn) | Cache adaptatif |
+
+!!! success "Points clés à retenir"
+
+    1. **LIFO vs FIFO** : Choisissez la pile pour l'ordre inverse, la file pour l'ordre d'arrivée.
+    2. **Files circulaires** : Évitent le décalage O(n) en utilisant l'arithmétique modulaire.
+    3. **Deque** : Structure polyvalente qui généralise pile et file.
+    4. **Move-to-front** : Heuristique efficace quand il y a localité temporelle.
+    5. **Concurrence** : Toujours synchroniser l'accès aux structures partagées entre threads.
+
+---
+
+## Références
+
+* Goodrich, Tamassia, Goldwasser. *Data Structures and Algorithms in Java*, 6th Edition.
+    * Chapitre 6 : Stacks, Queues, and Deques
+    * Section 7.7 : The Favorites List ADT
+* Documentation Java : [`java.util.Deque`](https://docs.oracle.com/javase/8/docs/api/java/util/Deque.html), [`java.util.concurrent.BlockingQueue`](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/BlockingQueue.html)
