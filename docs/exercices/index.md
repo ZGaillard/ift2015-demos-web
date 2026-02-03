@@ -16,3 +16,4 @@ Cette section contient les exercices pratiques hebdomadaires du cours IFT2015. C
 |:-------:|:--------:|-------|:----:|
 | 2 | 7 | Listes et listes positionnelles | [:material-arrow-right-circle: Démonstration 2](demo2.md) |
 | 3 | 6, 7.7 | Piles, Files, Deques et Liste de Favoris | [:material-arrow-right-circle: Démonstration 3](demo3.md) |
+| 4 | 9 | Files avec priorités et Tas (Heaps) | [:material-arrow-right-circle: Démonstration 4](demo4.md) |
