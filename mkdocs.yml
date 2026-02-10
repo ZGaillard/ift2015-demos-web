@@ -42,6 +42,7 @@ nav:
       - "Démonstration 2 : Listes et listes positionnelles": exercices/demo2.md
       - "Démonstration 3 : Piles, Files, Deques et Liste de Favoris": exercices/demo3.md
       - "Démonstration 4 : Files avec priorités et Tas (Heaps)": exercices/demo4.md
+      - "Démonstration 5 : Révision Mi-Session": exercices/demo5.md
   - Travaux pratiques: tp/index.md
   - Corrections: corrections.md
   - Configuration: configuration.md
