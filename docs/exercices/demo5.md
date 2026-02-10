@@ -568,46 +568,7 @@ Pour chaque énoncé, indiquez s'il est **vrai** ou **faux** et justifiez votre 
 
         Ce graphe est très creux : E ≈ 100M vs V² = 10¹². La liste d'adjacence est clairement le bon choix.
 
-??? question "Question 7 — Priorités adaptables"
-    Dans une file à priorité adaptable, `replaceKey(entry, newKey)` est annoncé en O(log n).
-
-    Cette complexité suppose :
-
-    - [ ] A) Que le heap est toujours parfaitement équilibré
-    - [ ] B) Qu'on maintient une structure annexe pour localiser l'entrée en O(1)
-    - [ ] C) Que la nouvelle clé est toujours plus petite que l'ancienne
-    - [ ] D) Qu'on utilise un arbre binaire de recherche plutôt qu'un heap
-
-    ??? success "Réponse"
-        **B) Qu'on maintient une structure annexe pour localiser l'entrée en O(1)**
-
-        Sans mécanisme de localisation, trouver une entrée dans un heap nécessite un parcours en **O(n)**.
-
-        Pour atteindre O(log n) pour `replaceKey`, il faut :
-
-        1. **Localiser** l'entrée en O(1) — via un HashMap<Entry, Index> ou en stockant l'index dans l'objet Entry
-        2. **Modifier** la clé en O(1)
-        3. **Restaurer** l'invariant en O(log n) — up-heap ou down-heap selon que la clé augmente ou diminue
-
-        ```java
-        // Structure typique d'une PQ adaptable
-        class AdaptablePQ<K, V> {
-            Entry[] heap;
-            Map<Entry, Integer> locator;  // Localise l'index de chaque entry
-
-            void replaceKey(Entry e, K newKey) {
-                int index = locator.get(e);  // O(1)
-                K oldKey = e.getKey();
-                e.setKey(newKey);
-                if (newKey < oldKey) upHeap(index);    // O(log n)
-                else downHeap(index);                   // O(log n)
-            }
-        }
-        ```
-
-        **Piège classique :** Oublier le coût de localisation. Sans structure annexe, `replaceKey` serait O(n), pas O(log n).
-
-??? question "Question 8 — Système Undo/Redo"
+??? question "Question 7 — Système Undo/Redo"
     Vous implémentez un système d'annulation (Undo) avec les contraintes :
 
     - Undo illimité
