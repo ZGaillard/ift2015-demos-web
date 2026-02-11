@@ -340,6 +340,26 @@ Pour chaque énoncé, indiquez s'il est **vrai** ou **faux** et justifiez votre 
 
         **Piège classique :** Ignorer la distinction orienté vs non-orienté. Elle change le nombre maximum d'arêtes par un facteur 2.
 
+??? question "Question 16 — Liste d'arêtes et voisinage"
+    Dans une représentation par liste d'arêtes (edge list), l'opération `incidentEdges(v)` (lister les arêtes incidentes à v) s'exécute en O(deg(v)).
+
+    ??? success "Réponse"
+        **Faux.** Dans une liste d'arêtes, `incidentEdges(v)` nécessite de **parcourir toutes les arêtes** pour trouver celles incidentes à v, ce qui donne **O(m)** où m est le nombre total d'arêtes.
+
+        C'est la principale faiblesse de la liste d'arêtes par rapport à la liste d'adjacence :
+
+        | Opération | Liste d'arêtes | Liste d'adjacence |
+        |-----------|---------------|-------------------|
+        | `incidentEdges(v)` | **O(m)** | **O(deg(v))** |
+        | `areAdjacent(v, w)` | **O(m)** | **O(min(deg(v), deg(w)))** |
+        | `insertEdge(e)` | **O(1)** | **O(1)** |
+        | `removeEdge(e)` | **O(1)** | **O(1)** |
+        | Espace | O(n + m) | O(n + m) |
+
+        La liste d'arêtes est la structure la plus **simple** mais la moins performante pour les requêtes de voisinage. Elle est utile quand on a besoin principalement d'itérer sur toutes les arêtes.
+
+        **Piège classique :** Confondre liste d'arêtes et liste d'adjacence. La liste d'arêtes ne stocke **pas** les arêtes par sommet, mais dans une collection globale.
+
 ---
 
 ### Section 2 — QCM Comparatifs
@@ -372,35 +392,32 @@ Pour chaque énoncé, indiquez s'il est **vrai** ou **faux** et justifiez votre 
         - `LinkedList` a un accès O(n) mais insertion/suppression O(1) **si on a déjà la position**
         - La liste positionnelle combine le meilleur des deux **quand on garde les positions**
 
-??? question "Question 2 — Cache LRU"
-    Vous implémentez un cache LRU (Least Recently Used) qui doit supporter ces opérations :
+??? question "Question 2 — Représentations de graphes"
+    Un réseau de transport a **500 stations** et **800 connexions** bidirectionnelles. On doit fréquemment lister toutes les stations voisines d'une station donnée et vérifier si deux stations sont directement connectées.
 
-    - Accéder à un élément par clé en O(1)
-    - Déplacer l'élément accédé en "tête" (plus récent) en O(1)
-    - Évincer le plus ancien élément en O(1)
+    Quelle représentation est la plus adaptée ?
 
-    Quelle combinaison de structures est optimale ?
-
-    - [ ] A) ArrayList + HashMap
-    - [ ] B) LinkedList + HashMap
-    - [ ] C) Liste positionnelle doublement chaînée + HashMap<clé, Position>
-    - [ ] D) Deux Stacks
+    - [ ] A) Liste d'arêtes (edge list)
+    - [ ] B) Matrice d'adjacence
+    - [ ] C) Liste d'adjacence
+    - [ ] D) Toutes sont équivalentes
 
     ??? success "Réponse"
-        **C) Liste positionnelle doublement chaînée + HashMap<clé, Position>**
+        **C) Liste d'adjacence**
 
-        Analyse de chaque option :
+        Analyse pour ce graphe (n = 500, m = 800, graphe creux car m << n²) :
 
-        | Option | Accès par clé | Déplacer en tête | Évincer ancien | Verdict |
-        |--------|---------------|------------------|----------------|---------|
-        | A) ArrayList + HashMap | O(1) | O(n) décalage | O(n) | ✗ |
-        | B) LinkedList + HashMap | O(1) | O(n) trouver position | O(1) | ✗ |
-        | C) Liste pos. + HashMap | O(1) | O(1) avec position | O(1) | ✓ |
-        | D) Deux Stacks | O(n) | O(n) | O(n) | ✗ |
+        | Opération | Liste d'arêtes | Matrice d'adjacence | Liste d'adjacence |
+        |-----------|---------------|--------------------|--------------------|
+        | `incidentEdges(v)` | **O(m)** = O(800) | **O(n)** = O(500) | **O(deg(v))** ≈ O(3) |
+        | `areAdjacent(v, w)` | **O(m)** = O(800) | **O(1)** | **O(min(deg))** ≈ O(3) |
+        | Espace | O(n + m) = 1 300 | **O(n²)** = 250 000 | O(n + m) = 1 300 |
 
-        La clé est de stocker les **positions** dans le HashMap, pas juste les valeurs. Ainsi, après avoir trouvé la position en O(1) via le HashMap, on peut la déplacer en O(1) grâce à la liste positionnelle.
+        - **Liste d'arêtes** : Trop lente pour les requêtes de voisinage — il faut parcourir **toutes** les arêtes à chaque fois
+        - **Matrice** : Gaspille 250 000 entrées pour seulement 800 connexions, et `incidentEdges` requiert O(n)
+        - **Liste d'adjacence** : Espace compact et opérations proportionnelles au degré
 
-        C'est exactement l'implémentation de `LinkedHashMap` en Java avec `accessOrder=true`.
+        **Piège classique :** La liste d'arêtes est simple à implémenter mais devient prohibitive dès qu'on fait des requêtes de voisinage fréquentes.
 
 ??? question "Question 3 — Analyse de complexité"
     ```java
@@ -728,14 +745,26 @@ Pour chaque énoncé, indiquez s'il est **vrai** ou **faux** et justifiez votre 
 ??? question "Exercice 3 — Conversion de graphe"
     Soit le graphe **orienté** défini par les arcs : (A→B), (A→C), (B→C), (C→A), (D→B)
 
-    a) Dessinez la **matrice d'adjacence** (4×4)
+    a) Donnez la **liste d'arêtes** (edge list)
 
-    b) Donnez la **liste d'adjacence**
+    b) Dessinez la **matrice d'adjacence** (4×4)
 
-    c) Quel est le **degré entrant** et **sortant** de chaque sommet ?
+    c) Donnez la **liste d'adjacence**
+
+    d) Quel est le **degré entrant** et **sortant** de chaque sommet ?
 
     ??? success "Réponse"
-        **a) Matrice d'adjacence :**
+        **a) Liste d'arêtes :**
+
+        ```
+        E = [(A,B), (A,C), (B,C), (C,A), (D,B)]
+        ```
+
+        Chaque arc est un objet stockant ses deux endpoints (origine, destination). C'est la représentation la plus simple : une collection globale d'arêtes.
+
+        ---
+
+        **b) Matrice d'adjacence :**
 
         |   | A | B | C | D |
         |---|---|---|---|---|
@@ -748,7 +777,7 @@ Pour chaque énoncé, indiquez s'il est **vrai** ou **faux** et justifiez votre 
 
         ---
 
-        **b) Liste d'adjacence :**
+        **c) Liste d'adjacence :**
 
         ```
         A → [B, C]
@@ -759,7 +788,7 @@ Pour chaque énoncé, indiquez s'il est **vrai** ou **faux** et justifiez votre 
 
         ---
 
-        **c) Degrés :**
+        **d) Degrés :**
 
         | Sommet | Degré sortant (out) | Degré entrant (in) |
         |--------|--------------------|--------------------|
@@ -776,94 +805,81 @@ Pour chaque énoncé, indiquez s'il est **vrai** ou **faux** et justifiez votre 
 
 ### Section 4 — Scénarios de Conception
 
-??? question "Scénario 1 — Moteur de recherche documentaire"
-    **Contexte** : Un système d'indexation pour 100 000 documents scientifiques. Chaque document contient en moyenne 500 mots-clés uniques.
+??? question "Scénario 1 — Réseau de capteurs IoT"
+    **Contexte** : Un réseau de 200 capteurs environnementaux. Les capteurs communiquent entre eux par liaison radio (portée limitée). Le réseau a environ 600 liaisons bidirectionnelles.
 
     **Opérations requises** :
 
-    1. Indexer un nouveau document (rare : ~10/jour)
-    2. Rechercher tous les documents contenant un mot-clé (très fréquent : ~1000/min)
-    3. Retourner les top-10 résultats par pertinence (score)
+    1. Ajouter/retirer un capteur (rare : maintenance)
+    2. Ajouter/retirer une liaison quand un capteur change de portée (occasionnel)
+    3. Lister toutes les liaisons du réseau pour calculer le coût total de maintenance (fréquent)
+    4. Trouver tous les voisins d'un capteur pour le routage de données (très fréquent)
 
     **Questions** :
 
-    1. Quelle structure pour l'index inversé (mot-clé → liste de documents) ?
-    2. La relation document-mot-clé forme-t-elle un graphe ? Si oui, lequel ?
-    3. Pour les top-10 résultats, comparez : trier toute la liste vs utiliser un heap. Complexité si une recherche retourne m documents ?
-    4. Quel invariant maintenez-vous ? Quel est son coût ?
+    1. Pour l'opération 3 (lister toutes les liaisons), quelle représentation est la plus naturelle ? Complexité ?
+    2. Pour l'opération 4 (trouver les voisins), comparez les trois représentations (liste d'arêtes, liste d'adjacence, matrice). Laquelle est la plus efficace ?
+    3. Peut-on combiner deux représentations ? Quel est le compromis ?
+    4. Ce graphe est-il dense ou creux ? Justifiez et déduisez la représentation à éviter.
 
     ??? success "Réponse"
-        **1. Structure pour l'index inversé :**
+        **1. Lister toutes les liaisons — Liste d'arêtes :**
 
-        Un **HashMap<String, List<DocumentInfo>>** où :
+        La **liste d'arêtes** est la plus naturelle pour itérer sur toutes les arêtes :
 
-        - Clé : mot-clé
-        - Valeur : liste des documents contenant ce mot, avec métadonnées (id, score de pertinence)
+        - Chaque arête est un objet stocké dans une collection
+        - Itération : **O(m)** — on parcourt directement la liste
 
-        ```java
-        Map<String, List<DocEntry>> index = new HashMap<>();
+        Avec une liste d'adjacence, il faut parcourir tous les sommets et leurs listes de voisins, ce qui donne aussi O(n + m) mais avec plus d'overhead. De plus, chaque arête apparaît dans deux listes de voisins, nécessitant un mécanisme pour éviter les doublons.
 
-        class DocEntry {
-            int docId;
-            double relevanceScore;  // TF-IDF ou autre
-        }
+        Avec une matrice, il faut scanner toute la matrice O(n²) pour trouver les entrées non-nulles, ce qui est bien pire.
+
         ```
-
-        Complexité de recherche par mot-clé : **O(1)** pour accéder à la liste.
-
-        ---
-
-        **2. Graphe biparti :**
-
-        Oui, la relation document-mot-clé forme un **graphe biparti** :
-
-        - Ensemble U : documents (100 000 sommets)
-        - Ensemble V : mots-clés (nombre variable, disons 50 000 uniques)
-        - Arêtes : (doc, mot) si le document contient le mot
-
-        Nombre d'arêtes : ~100 000 × 500 = 50 millions
-
-        Cependant, pour la recherche, l'index inversé (HashMap) est plus efficace qu'un parcours de graphe.
-
-        ---
-
-        **3. Top-10 : Tri vs Heap**
-
-        | Approche | Complexité | Quand l'utiliser |
-        |----------|------------|------------------|
-        | Trier toute la liste | O(m log m) | Jamais pour top-k avec k << m |
-        | **Min-heap de taille k** | **O(m log k)** | Optimal pour top-k |
-        | Sélection (QuickSelect) | O(m) en moyenne | Si on n'a pas besoin de l'ordre |
-
-        Pour m = 10 000 documents et k = 10 :
-
-        - Tri : O(10 000 × 13) ≈ 130 000 opérations
-        - Heap : O(10 000 × 3) ≈ 30 000 opérations
-
-        **Le heap de taille k est ~4× plus efficace.**
-
-        ```java
-        PriorityQueue<DocEntry> topK = new PriorityQueue<>(
-            Comparator.comparingDouble(d -> d.score)  // Min-heap
-        );
-        for (DocEntry doc : results) {
-            topK.offer(doc);
-            if (topK.size() > k) topK.poll();  // Éjecter le minimum
-        }
+        Liste d'arêtes :
+        [(A,B), (A,C), (B,D), (C,D), (D,E), ...]
+        → Parcours direct en O(m)
         ```
 
         ---
 
-        **4. Invariant et coût :**
+        **2. Trouver les voisins — Liste d'adjacence :**
 
-        **Invariant** : L'index inversé est toujours à jour (chaque mot-clé pointe vers tous les documents qui le contiennent).
+        | Représentation | `incidentEdges(v)` | Coût pour ce réseau |
+        |---------------|-------------------|---------------------|
+        | Liste d'arêtes | O(m) | O(600) à chaque requête |
+        | Matrice d'adjacence | O(n) | O(200) |
+        | **Liste d'adjacence** | **O(deg(v))** | **O(6)** en moyenne |
 
-        **Coût de maintenance** :
+        La liste d'adjacence est **100× plus efficace** que la liste d'arêtes pour cette opération, car le degré moyen est 2m/n = 1200/200 = 6.
 
-        - Indexer un nouveau document : O(W) où W = nombre de mots-clés du document (~500)
-        - Pour chaque mot : O(1) pour ajouter à la liste du HashMap
+        ---
 
-        Ce coût est acceptable car l'indexation est rare (10/jour) et la recherche est fréquente (1000/min). On optimise pour l'opération dominante.
+        **3. Combinaison de représentations :**
+
+        Oui, on peut maintenir **deux représentations simultanément** :
+
+        - **Liste d'arêtes** pour l'opération 3 (itération globale sur les arêtes)
+        - **Liste d'adjacence** pour l'opération 4 (voisinage rapide)
+
+        **Compromis** :
+
+        | Aspect | Une seule structure | Deux structures |
+        |--------|-------------------|-----------------|
+        | Espace | O(n + m) | O(n + m) × 2 |
+        | Insertion d'arête | O(1) | O(1) × 2 opérations |
+        | Cohérence | Automatique | Doit maintenir les deux en synchronisation |
+
+        Le surcoût est acceptable si les deux opérations sont fréquentes. C'est d'ailleurs l'approche recommandée dans le livre (Section 14.2).
+
+        ---
+
+        **4. Dense ou creux ?**
+
+        - n = 200, m = 600
+        - Maximum d'arêtes (non-orienté) : n(n-1)/2 = 19 900
+        - Ratio : 600 / 19 900 ≈ **3%** → **graphe creux**
+
+        **Représentation à éviter** : La **matrice d'adjacence** qui utiliserait 200² = 40 000 entrées pour seulement 600 arêtes (66× plus de mémoire que nécessaire).
 
 ??? question "Scénario 2 — Système de contrôle de versions"
     **Contexte** : Un système Git-like pour gérer l'historique d'un projet.
@@ -944,8 +960,6 @@ Pour chaque énoncé, indiquez s'il est **vrai** ou **faux** et justifiez votre 
         - Nombre de commits peut être très grand (millions)
         - Matrice V² serait énorme et majoritairement vide
 
-        En pratique, Git utilise aussi un **HashMap<id, Commit>** pour accéder rapidement à n'importe quel commit par son hash.
-
         ---
 
         **4. Opération log — Parcours :**
@@ -966,101 +980,86 @@ Pour chaque énoncé, indiquez s'il est **vrai** ou **faux** et justifiez votre 
 
         **Complexité** : O(n) où n = nombre de commits ancêtres, car chaque commit est visité une seule fois.
 
-??? question "Scénario 3 — Matchmaking de jeu en ligne"
-    **Contexte** : Un jeu en ligne avec matchmaking basé sur le niveau (ELO). 10 000 joueurs en file simultanément aux heures de pointe.
+??? question "Scénario 3 — Gestion d'une salle d'urgences"
+    **Contexte** : Une salle d'urgences doit gérer la file d'attente de patients. Environ 50 patients attendent en permanence aux heures de pointe.
 
     **Opérations requises** :
 
-    1. Joueur rejoint la file avec son ELO (très fréquent)
-    2. Trouver deux joueurs avec ELO similaire (différence < 100) et les retirer (très fréquent)
-    3. Joueur quitte la file avant d'être matché (occasionnel)
-    4. ELO d'un joueur change pendant l'attente (rare mais possible)
+    1. Nouveau patient arrive avec un score de sévérité (1 = mineur, 10 = critique) — fréquent
+    2. Appeler le prochain patient à traiter (le plus urgent) — fréquent
+    3. La condition d'un patient change pendant l'attente (mise à jour du score) — occasionnel
+    4. Patient quitte avant d'être traité — rare
 
     **Questions** :
 
-    1. Une simple Queue FIFO suffit-elle ? Pourquoi ?
-    2. Proposez une structure qui supporte efficacement les opérations 1-3.
-    3. Comment gérer le changement d'ELO (opération 4) ? Quel est le coût ?
-    4. Avec 10 000 joueurs et multiples threads serveur, quels problèmes de concurrence anticipez-vous ?
+    1. Une file FIFO simple convient-elle ? Pourquoi ?
+    2. Quelle structure de données est la plus adaptée pour les opérations 1 et 2 ? Complexité ?
+    3. L'opération 3 nécessite de modifier la priorité d'un élément déjà dans la structure. Quelle variante de votre structure le supporte ? Complexité ?
+    4. Comparez l'approche heap avec l'approche liste triée pour ce scénario.
 
     ??? success "Réponse"
-        **1. Queue FIFO insuffisante :**
+        **1. File FIFO insuffisante :**
 
-        Non, une FIFO ne suffit pas car :
+        Non, une FIFO traite les patients par **ordre d'arrivée**, pas par urgence. Un patient critique arrivé en dernier devrait être traité avant un patient mineur arrivé en premier.
 
-        - Le matchmaking cherche des joueurs de **niveau similaire**, pas les plus anciens
-        - Trouver deux joueurs avec ELO proche nécessiterait de parcourir toute la file O(n)
-
-        Une FIFO serait injuste : un joueur ELO 2000 attendrait qu'un autre joueur ELO 2000 arrive, même si des joueurs ELO 1000 attendent depuis longtemps.
+        Exception : à sévérité égale, l'ordre d'arrivée est un bon critère de départage (FIFO au sein de chaque niveau de priorité).
 
         ---
 
-        **2. Structure proposée — TreeMap ou structure triée par ELO :**
+        **2. File à priorité (heap) :**
+
+        Un **max-heap** basé sur le score de sévérité :
 
         ```java
-        // TreeMap : ELO → Liste de joueurs avec cet ELO
-        TreeMap<Integer, Queue<Player>> waitingByElo = new TreeMap<>();
+        PriorityQueue<Patient> urgences = new PriorityQueue<>(
+            Comparator.comparingInt(Patient::severity).reversed()  // Max-heap
+        );
         ```
 
-        **Opération 1 (rejoindre)** : O(log n)
-        ```java
-        void join(Player p) {
-            waitingByElo.computeIfAbsent(p.elo, k -> new LinkedList<>())
-                        .add(p);
-        }
-        ```
+        | Opération | Complexité |
+        |-----------|------------|
+        | Insertion (nouveau patient) | O(log n) |
+        | Extraction du max (prochain patient) | O(log n) |
 
-        **Opération 2 (matcher)** : O(log n)
-        ```java
-        Match findMatch() {
-            for (Integer elo : waitingByElo.keySet()) {
-                // Chercher un joueur avec ELO dans [elo-100, elo+100]
-                SortedMap<Integer, Queue<Player>> range =
-                    waitingByElo.subMap(elo - 100, elo + 101);
-                // Si deux joueurs trouvés, les retirer et retourner le match
-            }
-        }
-        ```
-
-        **Opération 3 (quitter)** : O(log n) pour trouver + O(k) pour retirer de la queue
-
-        Pour améliorer l'opération 3, on peut ajouter un **HashMap<PlayerId, Position>** pour localiser instantanément un joueur.
+        Avec n ≈ 50, log₂(50) ≈ 6. Chaque opération est très rapide.
 
         ---
 
-        **3. Changement d'ELO — File à priorité adaptable :**
+        **3. File à priorité adaptable :**
 
-        Avec un TreeMap simple, changer l'ELO nécessite :
+        Une **file à priorité adaptable** (Section 9.5 du livre) permet de modifier la clé d'une entrée existante :
 
-        1. Retirer le joueur de son ancienne position O(log n + k)
-        2. Le réinsérer à sa nouvelle position O(log n)
+        ```java
+        // Avec file adaptable
+        Entry<Integer, Patient> entry = pq.insert(severity, patient);
 
-        Avec une **structure adaptable** (ex: TreeMap + HashMap<Player, Entry>) :
+        // Plus tard, si la condition change :
+        pq.replaceKey(entry, newSeverity);  // O(log n)
+        ```
 
-        1. Localiser en O(1)
-        2. Retirer et réinsérer en O(log n)
+        Le mécanisme repose sur un **locator** : chaque entrée connaît sa position dans le heap, permettant un accès direct pour la mise à jour.
 
-        **Coût total : O(log n)** au lieu de O(n) sans localisation.
+        | Opération | Heap simple | Heap adaptable |
+        |-----------|-------------|----------------|
+        | `insert` | O(log n) | O(log n) |
+        | `removeMin/Max` | O(log n) | O(log n) |
+        | `replaceKey` | **O(n)** (chercher + restructurer) | **O(log n)** |
+        | `remove(entry)` | **O(n)** | **O(log n)** |
+
+        Sans file adaptable, modifier la priorité nécessite de parcourir tout le heap pour trouver l'élément : O(n).
 
         ---
 
-        **4. Problèmes de concurrence :**
+        **4. Heap vs liste triée :**
 
-        - **Race condition** : Deux threads trouvent le même joueur comme "meilleur match" simultanément
+        | Critère | Heap | Liste triée |
+        |---------|------|-------------|
+        | Insertion | **O(log n)** | O(n) — trouver la position |
+        | Extraction du max | **O(log n)** | **O(1)** — dernier élément |
+        | Mise à jour priorité | **O(log n)** (adaptable) | O(n) — repositionner |
+        | Espace | O(n) tableau | O(n) |
 
-        - **Incohérence** : Un joueur est matché pendant qu'un autre thread essaie de le retirer (opération 3)
-
-        - **Contention** : Si tous les threads accèdent au même TreeMap, goulot d'étranglement
-
-        **Solutions** :
-
-        1. **Verrouillage par segment** : Diviser les joueurs par tranche d'ELO (0-500, 500-1000, etc.) avec un verrou par segment
-
-        2. **Structures concurrentes** : `ConcurrentSkipListMap` au lieu de TreeMap
-
-        3. **Atomic operations** : Utiliser `computeIfAbsent`, `remove` atomiques
-
-        4. **Optimistic locking** : Essayer l'opération, réessayer si conflit détecté
+        Pour ce scénario avec insertions et extractions fréquentes, le **heap est supérieur**. La liste triée n'est avantageuse que si les extractions sont beaucoup plus fréquentes que les insertions.
 
 ---
 
@@ -1264,178 +1263,137 @@ Pour chaque énoncé, indiquez s'il est **vrai** ou **faux** et justifiez votre 
 
 ### Section 6 — Exercice de Synthèse
 
-??? question "Plateforme de livraison — Architecture de données"
-    Une application de livraison de repas doit gérer :
+??? question "Réseau de distribution d'énergie — Architecture de données"
+    Un réseau électrique régional doit gérer :
 
     **Entités** :
 
-    - **Restaurants** : id, position (x, y), temps de préparation moyen
-    - **Livreurs** : id, position actuelle, statut (disponible/en course), note moyenne
-    - **Commandes** : id, restaurant, position client, heure de commande, statut
+    - **Nœuds** : 500 points (centrales, sous-stations, transformateurs, points de consommation)
+    - **Lignes** : 1200 lignes de transmission, chacune avec une capacité maximale (MW) et un coût d'entretien
+    - Le réseau est **non-orienté** (l'électricité peut circuler dans les deux sens)
 
     **Opérations critiques** (par ordre de fréquence) :
 
-    1. **Nouvelle commande** : trouver les 5 restaurants les plus proches du client
-    2. **Assigner livreur** : parmi les livreurs disponibles, trouver le meilleur (proche du restaurant + bonne note)
-    3. **Mise à jour position** : livreur envoie sa position GPS toutes les 30 secondes
-    4. **Compléter livraison** : marquer commande terminée, libérer livreur
+    1. **Surveillance** : Pour un nœud donné, lister toutes les lignes connectées et leur charge actuelle (très fréquent)
+    2. **Calcul de coût** : Parcourir toutes les lignes pour calculer le coût total de maintenance (quotidien)
+    3. **Panne** : Retirer une ligne défectueuse et vérifier si le réseau reste connexe (occasionnel)
+    4. **Extension** : Ajouter une nouvelle ligne entre deux nœuds (rare)
 
     ---
 
-    **Question 1** : Structure pour les livreurs disponibles
+    **Question 1** : Choix de représentation principale
 
-    Proposez une structure pour trouver rapidement le "meilleur" livreur disponible. La note et la distance sont deux critères — comment les combiner ?
+    Comparez les trois représentations (liste d'arêtes, liste d'adjacence, matrice) pour ce réseau. Quelle est la plus adaptée comme structure principale ?
 
-    **Question 2** : Gestion des mises à jour de position
+    **Question 2** : Stockage des attributs des lignes
 
-    Si un livreur met à jour sa position, son "score" change. Impact sur votre structure ?
+    Chaque ligne a des attributs (capacité, coût, charge actuelle). Comment les stocker dans chaque représentation ?
 
-    **Question 3** : File des commandes en attente
+    **Question 3** : Opération de calcul de coût
 
-    Une commande attend qu'un livreur soit disponible. FIFO simple ou avec priorités ?
+    Pour l'opération 2, est-il avantageux de maintenir une liste d'arêtes en plus de la structure principale ? Justifiez.
 
-    **Question 4** : Scalabilité
+    **Question 4** : Détection de connexité après panne
 
-    À 1000 livreurs et 100 mises à jour de position/seconde, votre structure tient-elle ?
+    Après le retrait d'une ligne, comment vérifier que le réseau reste connexe ? Quelle représentation facilite cette vérification ?
 
     ??? success "Réponse"
-        **Question 1 : Structure pour les livreurs**
+        **Question 1 : Choix de représentation**
 
-        **Fonction de score combiné :**
+        | Critère | Liste d'arêtes | Liste d'adjacence | Matrice |
+        |---------|---------------|-------------------|---------|
+        | Espace | O(n + m) = 1 700 | O(n + m) = 1 700 | O(n²) = 250 000 |
+        | Op. 1 : voisins d'un nœud | O(m) = O(1200) | **O(deg(v))** ≈ O(5) | O(n) = O(500) |
+        | Op. 2 : toutes les lignes | **O(m)** = O(1200) | O(n + m) = O(1700) | O(n²) = O(250 000) |
+        | Op. 3 : retirer une ligne | O(1)* | O(deg(v)) | O(1) |
+        | Op. 4 : ajouter une ligne | O(1) | O(1) | O(1) |
 
-        ```java
-        double score(Delivery d, Restaurant r) {
-            double distance = distance(d.position, r.position);
-            double rating = d.rating;  // 1-5
+        **La liste d'adjacence** est la meilleure structure principale car l'opération 1 (la plus fréquente) est O(deg(v)) au lieu de O(m).
 
-            // Score : privilégier proximité, bonus pour bonne note
-            return distance - (rating * RATING_WEIGHT);
-            // Plus le score est bas, meilleur est le livreur
-        }
-        ```
-
-        **Structure : Min-heap avec score dynamique**
-
-        Problème : le score dépend du restaurant de la commande, donc change à chaque requête !
-
-        **Solution pragmatique :**
-
-        ```java
-        class DeliveryService {
-            // Livreurs disponibles, accès O(1) par id
-            Map<Integer, Delivery> availableDrivers = new HashMap<>();
-
-            Delivery findBest(Restaurant r) {
-                return availableDrivers.values().stream()
-                    .min(Comparator.comparingDouble(d -> score(d, r)))
-                    .orElse(null);
-            }
-        }
-        ```
-
-        **Complexité** : O(n) où n = nombre de livreurs disponibles.
-
-        Pour améliorer, on pourrait utiliser une structure spatiale (QuadTree, R-Tree) pour filtrer d'abord les livreurs proches, puis scorer parmi ceux-là.
+        Le graphe est creux : m = 1200 vs n² = 250 000, donc la matrice est à éviter.
 
         ---
 
-        **Question 2 : Mises à jour de position**
+        **Question 2 : Stockage des attributs**
 
-        Avec la structure HashMap ci-dessus :
-
-        - Mise à jour : O(1) — juste modifier l'objet `Delivery`
-        - Pas de restructuration nécessaire car le score est calculé à la demande
-
-        Si on utilisait un heap pré-calculé :
-
-        - Chaque mise à jour de position nécessiterait de recalculer le score et repositionner dans le heap
-        - Coût : O(log n) avec file adaptable, O(n) sans
-        - Avec 100 mises à jour/seconde, c'est potentiellement 100 × log(1000) ≈ 1000 opérations/seconde — acceptable
-
-        **Trade-off :**
-
-        | Approche | Mise à jour | Recherche meilleur |
-        |----------|-------------|-------------------|
-        | HashMap + calcul à la demande | O(1) | O(n) |
-        | Heap adaptable | O(log n) | O(1) extraction |
-
-        Choix selon le ratio mises à jour / recherches.
-
-        ---
-
-        **Question 3 : File des commandes en attente**
-
-        **FIFO avec priorité** (pas FIFO simple) :
-
-        Raisons d'ajouter des priorités :
-
-        1. **Temps d'attente** : commandes anciennes deviennent plus urgentes
-        2. **Type de client** : clients premium pourraient être prioritaires
-        3. **Taille de commande** : éviter que les petites commandes attendent derrière une grosse
-
-        **Structure : PriorityQueue avec priorité dynamique**
+        - **Liste d'arêtes** : Chaque objet Edge stocke directement ses attributs — c'est le plus naturel.
 
         ```java
-        class WaitingOrder implements Comparable<WaitingOrder> {
-            Order order;
-            Instant arrivalTime;
-
-            int priority() {
-                long waitMinutes = Duration.between(arrivalTime, Instant.now()).toMinutes();
-                return (int) waitMinutes + order.premiumBonus;
-            }
-
-            public int compareTo(WaitingOrder other) {
-                return Integer.compare(other.priority(), this.priority());  // Max first
-            }
+        class Edge {
+            Vertex u, v;
+            double capacity;
+            double cost;
+            double currentLoad;
         }
-
-        PriorityQueue<WaitingOrder> waitingOrders = new PriorityQueue<>();
         ```
 
-        **Attention** : La priorité change avec le temps ! Il faut soit :
+        - **Liste d'adjacence** : Chaque entrée dans la liste de voisins doit référencer l'objet Edge (ou dupliquer les données).
 
-        - Recalculer à chaque extraction (acceptable si extractions peu fréquentes)
-        - Utiliser une file adaptable avec mise à jour périodique
+        ```
+        A → [(B, edge1), (D, edge2)]  // Référence à l'objet Edge
+        ```
+
+        - **Matrice** : Les attributs sont stockés dans les cellules de la matrice au lieu de simples booléens.
+
+        ```
+        M[A][B] = Edge(capacity=100, cost=50, load=75)
+        ```
+
+        **La liste d'arêtes est la plus naturelle** pour stocker les attributs. C'est un avantage clé de cette représentation.
 
         ---
 
-        **Question 4 : Scalabilité**
+        **Question 3 : Maintenir une liste d'arêtes en plus ?**
 
-        **Charge :**
+        **Oui**, c'est avantageux. Avec une liste d'adjacence seule, le calcul de coût total nécessite :
 
-        - 1000 livreurs
-        - 100 mises à jour position/seconde
-        - Disons 10 recherches de livreur/seconde
+        ```
+        Pour chaque sommet v :
+            Pour chaque arête incidente à v :
+                accumuler le coût
+        ```
 
-        **Avec HashMap + calcul à la demande :**
+        Problème : chaque arête est comptée **deux fois** (une par chaque extrémité dans un graphe non-orienté). Il faut soit diviser par 2, soit marquer les arêtes visitées.
 
-        - Mises à jour : 100 × O(1) = négligeable
-        - Recherches : 10 × O(1000) = 10 000 comparaisons/seconde — acceptable
+        Avec une **liste d'arêtes auxiliaire** :
 
-        **Goulot d'étranglement potentiel** : Concurrence !
+        ```
+        coût_total = 0
+        Pour chaque arête e dans la liste d'arêtes :
+            coût_total += e.cost
+        ```
 
-        - 100 mises à jour/seconde + 10 recherches = 110 opérations/seconde sur la même structure
-        - Avec `synchronized`, contention modérée
-        - Solution : `ConcurrentHashMap` avec opérations atomiques
+        Simple, direct, pas de doublons. Complexité : **O(m)**.
 
-        **Optimisation si nécessaire :**
+        **Compromis** : Maintenir les deux structures en synchronisation lors des ajouts/retraits. Coût supplémentaire : O(1) par opération de modification.
 
-        1. **Partitionnement géographique** : diviser la ville en zones, chaque zone a sa propre structure de livreurs
+        ---
 
-        2. **Index spatial** : QuadTree pour trouver rapidement les livreurs dans un rayon
+        **Question 4 : Vérification de connexité**
 
-        3. **Cache** : précalculer les "bons livreurs" pour les restaurants populaires
+        Après le retrait d'une arête, on vérifie la connexité par un **parcours** (BFS ou DFS) depuis un sommet quelconque :
 
-        ```java
-        // Partitionnement par zone
-        Map<Zone, Map<Integer, Delivery>> driversByZone = new ConcurrentHashMap<>();
+        - Si le parcours visite **tous les n sommets** → le réseau est encore connexe
+        - Sinon → la suppression a déconnecté le réseau
 
-        Delivery findBest(Restaurant r) {
-            Zone zone = getZone(r.position);
-            // Chercher d'abord dans la zone, puis zones adjacentes
-            return searchInZones(zone, r);
-        }
+        **Complexité** : O(n + m) pour le parcours.
+
+        **La liste d'adjacence** facilite cette vérification car le parcours BFS/DFS a besoin de `incidentEdges(v)` à chaque sommet, opération qui est O(deg(v)) avec la liste d'adjacence vs O(m) avec la liste d'arêtes.
+
+        Avec la liste d'arêtes seule, le parcours serait O(n × m) au total — beaucoup trop lent.
+
+        ```
+        Parcours BFS pour vérifier la connexité :
+
+        visités = {sommet_départ}
+        file = [sommet_départ]
+        tant que file non vide :
+            v = file.défiler()
+            pour chaque voisin w de v :    ← O(deg(v)) avec liste d'adjacence
+                si w pas dans visités :
+                    visités.ajouter(w)
+                    file.enfiler(w)
+        return |visités| == n
         ```
 
 ---
@@ -1468,9 +1426,10 @@ ACCÈS PRINCIPAL ?
 │
 └─► Relations entre entités
     └─► GRAPHE
-        └─► Dense (E ≈ V²) ?
-            ├─► Oui → Matrice d'adjacence
-            └─► Non → Liste d'adjacence
+        └─► Opération dominante ?
+            ├─► Itérer sur toutes les arêtes → Liste d'arêtes
+            ├─► Voisinage / parcours → Liste d'adjacence
+            └─► Vérifier adjacence en O(1) → Matrice d'adjacence (si graphe dense)
 ```
 
 #### Pièges classiques — Résumé
@@ -1481,6 +1440,7 @@ ACCÈS PRINCIPAL ?
 | Heap = tableau trié | Non ! Seule garantie : parent ≤ enfants |
 | `synchronized` = thread-safe performant | Thread-safe oui, mais contention sous charge |
 | Position = index stable | Position invalide après suppression de **son** élément |
+| Liste d'arêtes = rapide pour voisinage | Non ! `incidentEdges(v)` = O(m), pas O(deg(v)) |
 | Matrice = choix par défaut pour graphes | Gaspille O(V²) mémoire pour graphes creux |
 | Complexité amortie = chaque opération | Non, c'est une moyenne sur n opérations |
 | Plus de code = plus lent | La complexité algorithmique prime |
@@ -1502,10 +1462,11 @@ ACCÈS PRINCIPAL ?
 
 ***Avec structure de localisation
 
-| Représentation graphe | Espace | Ajouter arête | Vérifier arête | Lister voisins |
-|-----------------------|--------|---------------|----------------|----------------|
-| Matrice d'adjacence | O(V²) | O(1) | O(1) | O(V) |
-| Liste d'adjacence | O(V + E) | O(1) | O(deg) | O(deg) |
+| Représentation graphe | Espace | Ajouter arête | Vérifier arête | Lister voisins | Lister toutes arêtes |
+|-----------------------|--------|---------------|----------------|----------------|---------------------|
+| Liste d'arêtes | O(V + E) | O(1) | O(E) | O(E) | **O(E)** |
+| Liste d'adjacence | O(V + E) | O(1) | O(deg) | O(deg) | O(V + E) |
+| Matrice d'adjacence | O(V²) | O(1) | O(1) | O(V) | O(V²) |
 
 ---
 
