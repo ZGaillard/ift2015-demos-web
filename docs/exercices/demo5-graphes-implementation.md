@@ -1,0 +1,165 @@
+# Guide détaillé — Implémentation des graphes (Chapitre 14)
+
+Ce document explique l'implémentation présente dans `docs/files/code/graphs/`
+
+## Liens rapides vers le code
+
+* Interface non orientée : [`Graph.java`](../files/code/graphs/src/graph/Graph.java)
+* Interface orientée : [`DirectedGraph.java`](../files/code/graphs/src/graph/DirectedGraph.java)
+* Modèle de sommet : [`Vertex.java`](../files/code/graphs/src/graph/Vertex.java)
+* Modèle d'arête : [`Edge.java`](../files/code/graphs/src/graph/Edge.java)
+* Edge list (non orienté) : [`EdgeListGraph.java`](../files/code/graphs/src/edgelist/EdgeListGraph.java)
+* Adjacency list (non orienté) : [`AdjacencyListGraph.java`](../files/code/graphs/src/adjlist/AdjacencyListGraph.java)
+* Adjacency matrix (non orienté) : [`AdjacencyMatrixGraph.java`](../files/code/graphs/src/matrix/AdjacencyMatrixGraph.java)
+* Edge list orienté : [`DirectedEdgeListGraph.java`](../files/code/graphs/src/edgelist/DirectedEdgeListGraph.java)
+* Adjacency list orienté : [`DirectedAdjacencyListGraph.java`](../files/code/graphs/src/adjlist/DirectedAdjacencyListGraph.java)
+* Adjacency matrix orienté : [`DirectedAdjacencyMatrixGraph.java`](../files/code/graphs/src/matrix/DirectedAdjacencyMatrixGraph.java)
+
+---
+
+## 1) API commune (ADT Graphe)
+
+L'interface `Graph` expose les opérations classiques de l'ADT :
+
+* `insertVertex`, `insertEdge`, `removeVertex`, `removeEdge`
+* `vertices`, `edges`
+* `getEdge(u,v)`, `incidentEdges(v)`, `degree(v)`
+
+L'interface `DirectedGraph` ajoute :
+
+* `outgoingEdges(v)`, `incomingEdges(v)`
+* `outDegree(v)`, `inDegree(v)`
+
+Cela permet de garder la même logique de test/usage, tout en changeant uniquement la représentation interne.
+
+---
+
+## 2) Modèle de données (`Vertex`, `Edge`)
+
+`Vertex` contient un label et `Edge` contient `origin`, `dest`, `label`.
+
+Point important dans ce code : les sommets et arêtes sont manipulés par **identité d'objet** (`==`), pas par égalité de label.
+
+Conséquence :
+
+* Deux objets `Vertex("A")` différents sont considérés comme deux sommets distincts.
+* Les opérations `getEdge`, `removeEdge`, etc. doivent utiliser les mêmes instances que celles retournées à l'insertion.
+
+---
+
+## 3) Les 3 structures non orientées
+
+### A. Edge List (`EdgeListGraph`)
+
+Stockage :
+
+* `List<Vertex> vertices`
+* `List<Edge> edges`
+
+Idée :
+
+* Représentation la plus simple.
+* Pas de structure locale par sommet.
+* Les requêtes de voisinage scannent souvent toute la liste d'arêtes.
+
+Complexités dominantes :
+
+* `insertVertex`, `insertEdge` : O(1)
+* `getEdge`, `incidentEdges`, `removeVertex` : O(m)
+* `removeEdge` : O(1)
+* Espace : O(n + m)
+
+Quand l'utiliser :
+
+* Bon choix si l'opération principale est l'itération globale sur toutes les arêtes.
+
+### B. Adjacency List (`AdjacencyListGraph`)
+
+Stockage :
+
+* `List<Vertex> vertices` (liste primaire)
+* Pour chaque sommet, sa propre liste d'incidence `I(v)` (stockée dans l'objet sommet)
+* `List<Edge> edges`
+
+Idée :
+
+* Chaque sommet pointe vers ses arêtes incidentes.
+* En non orienté, **la même arête** est ajoutée dans les deux listes (`u` et `v`).
+* La liste `edges` sert à exposer `edges()` sans rescanner toutes les listes locales.
+
+Complexités dominantes :
+
+* `incidentEdges(v)` et `degree(v)` : O(deg(v))
+* `getEdge(u,v)` : O(min(deg(u), deg(v)))
+* `insertEdge` : O(1)
+* `removeEdge` : O(1)
+* `removeVertex(v)` : O(deg(v))
+* Espace : O(n + m)
+
+Quand l'utiliser :
+
+* Structure la plus adaptée aux graphes creux, surtout quand on interroge souvent les voisins d'un sommet.
+
+### C. Adjacency Matrix (`AdjacencyMatrixGraph`)
+
+Stockage :
+
+* `List<Vertex> vertices` (ordre = index)
+* `Edge[][] matrix`
+
+Idée :
+
+* `matrix[i][j]` contient l'arête entre `i` et `j` (ou `null`).
+* En non orienté, la matrice est symétrique : `matrix[i][j] == matrix[j][i]`.
+
+Complexités dominantes :
+
+* `getEdge` : O(1)
+* `insertEdge`, `removeEdge` : O(1)
+* `insertVertex`, `removeVertex` : O(n^2) (reconstruction de matrice)
+* `incidentEdges(v)` : O(n)
+* Espace : O(n^2)
+
+---
+
+## 4) Versions orientées (digraphes)
+
+### A. `DirectedEdgeListGraph`
+
+Même structure que edge list, mais directionnelle :
+
+* `getEdge(u,v)` cherche uniquement l'arc `u -> v`.
+* `outgoingEdges` et `incomingEdges` filtrent la liste globale.
+
+### B. `DirectedAdjacencyListGraph`
+
+Deux listes d'adjacence séparées par sommet :
+
+* `outgoing[v]` : arcs sortants de `v`
+* `incoming[v]` : arcs entrants vers `v`
+
+Avantage :
+
+* `outDegree` et `inDegree` sont O(1) (taille de liste).
+
+Détail d'implémentation utile :
+
+* `incidentEdges(v)` fusionne `outgoing + incoming` en évitant de compter deux fois une boucle (`v -> v`).
+
+### C. `DirectedAdjacencyMatrixGraph`
+
+* `matrix[i][j]` représente un arc de `i` vers `j`.
+* La matrice n'est pas symétrique en général.
+* `outgoingEdges(v)` = scan de la ligne.
+* `incomingEdges(v)` = scan de la colonne.
+
+
+---
+
+## 5) Quel choix selon le besoin ?
+
+* Besoin dominant : `incidentEdges(v)` / voisinage rapide -> **Adjacency List**
+* Besoin dominant : `getEdge(u,v)` fréquent sur graphe dense -> **Adjacency Matrix**
+* Besoin dominant : itération simple de toutes les arêtes -> **Edge List**
+
+La bonne réponse dépend toujours des opérations dominantes et de la densité du graphe.

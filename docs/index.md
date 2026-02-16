@@ -18,7 +18,7 @@ Ce site regroupe les exercices pratiques, les travaux pratiques et les ressource
 
 Le cours suit le manuel **Data Structures and Algorithms in Java (6th Edition)** de Goodrich, Tamassia et Goldwasser.
 
-[:material-file-pdf-box: Télécharger le manuel (PDF)](files/pdf/Data%20Structures%20and%20Algorithms%20in%20Java,%206th%20Edition.pdf){ .md-button .md-button--primary }
+[:material-file-pdf-box: Télécharger le manuel (PDF)](files/pdf/DS_Java-Book.pdf){ .md-button .md-button--primary }
 ---
 
 ## Ressources utiles

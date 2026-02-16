@@ -74,7 +74,51 @@ markdown_extensions:
 
 plugins:
   - search:
-      lang: fr
+      lang:
+        - fr
+        - en
+        - zh
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: fr
+          default: true
+          name: Français
+          build: true
+          site_name: "IFT2015 - Structures de données"
+        - locale: en
+          name: English
+          build: true
+          site_name: "IFT2015 - Data Structures"
+          nav_translations:
+            Accueil: Home
+            Exercices: Exercises
+            Aperçu: Overview
+            "Démonstration 2 : Listes et listes positionnelles": "Demo 2: Lists and Positional Lists"
+            "Démonstration 3 : Piles, Files, Deques et Liste de Favoris": "Demo 3: Stacks, Queues, Deques and Favorites List"
+            "Démonstration 4 : Files avec priorités et Tas (Heaps)": "Demo 4: Priority Queues and Heaps"
+            "Démonstration 5 : Révision Mi-Session": "Demo 5: Mid-Session Review"
+            Travaux pratiques: Lab Work
+            Corrections: Answer Keys
+            Configuration: Configuration
+        - locale: zh
+          name: 简体中文
+          build: true
+          site_name: "IFT2015 - 数据结构"
+          nav_translations:
+            Accueil: 首页
+            Exercices: 练习
+            Aperçu: 概览
+            "Démonstration 2 : Listes et listes positionnelles": "演示 2：列表与位置列表"
+            "Démonstration 3 : Piles, Files, Deques et Liste de Favoris": "演示 3：栈、队列、双端队列与收藏列表"
+            "Démonstration 4 : Files avec priorités et Tas (Heaps)": "演示 4：优先队列与堆"
+            "Démonstration 5 : Révision Mi-Session": "演示 5：期中复习"
+            Travaux pratiques: 实验作业
+            Corrections: 答案
+            Configuration: 配置
   - mkdocs_matplotlib
 
 extra_javascript:

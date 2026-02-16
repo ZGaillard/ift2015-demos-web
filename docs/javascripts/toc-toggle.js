@@ -17,9 +17,17 @@
         }
     };
 
+    const translations = {
+        fr: { show: "Afficher sommaire", hide: "Masquer sommaire" },
+        en: { show: "Show table of contents", hide: "Hide table of contents" },
+        zh: { show: "显示目录", hide: "隐藏目录" },
+    };
+
     const applyState = (hidden, button) => {
         document.body.classList.toggle("ift-hide-toc", hidden);
-        button.textContent = hidden ? "Afficher sommaire" : "Masquer sommaire";
+        const lang = (document.documentElement.lang || "fr").substring(0, 2);
+        const t = translations[lang] || translations.fr;
+        button.textContent = hidden ? t.show : t.hide;
         button.setAttribute("aria-pressed", hidden ? "true" : "false");
     };
 

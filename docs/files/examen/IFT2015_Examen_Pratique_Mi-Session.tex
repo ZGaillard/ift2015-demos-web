@@ -1,0 +1,628 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+
+\geometry{margin=2.5cm}
+
+% Code listing style
+\lstdefinestyle{java}{
+    language=Java,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{red},
+    showstringspaces=false,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    numbersep=5pt,
+    frame=single,
+    breaklines=true,
+    tabsize=4
+}
+
+% Header/Footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{IFT2015-H26 -- Examen Pratique Mi-Session}
+\fancyhead[R]{Page \thepage\ / \pageref{LastPage}}
+\fancyfoot[C]{\small Université de Montréal -- Département d'informatique et de recherche opérationnelle}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\begin{document}
+
+% Title
+\begin{center}
+    {\Large \textbf{IFT2015 -- Structures de données}}\\[0.5em]
+    {\large \textbf{Examen Pratique Mi-Session}}\\[0.5em]
+    {\large Hiver 2026}\\[1em]
+    \rule{\textwidth}{0.4pt}
+\end{center}
+
+\vspace{0.5em}
+
+% Student info
+\noindent
+\begin{tabular}{@{}p{0.48\textwidth}p{0.48\textwidth}@{}}
+    \textbf{Nom :} \hrulefill & \textbf{Prénom :} \hrulefill \\[1em]
+    \textbf{Matricule :} \hrulefill & \textbf{Section :} \hrulefill \\
+\end{tabular}
+
+\vspace{1em}
+
+% Instructions
+\noindent\fbox{\parbox{\textwidth}{
+\textbf{Directives :}
+\begin{itemize}[nosep]
+    \item Durée : \textbf{2 heures}
+    \item Cet examen comporte \textbf{8 questions} réparties en 3 parties pour un total de \textbf{60 points}.
+    \item Documents autorisés : \textbf{Aucun}
+    \item Calculatrice : \textbf{Non autorisée}
+    \item Justifiez vos réponses lorsque demandé.
+    \item Écrivez lisiblement; les réponses illisibles ne seront pas corrigées.
+\end{itemize}
+}}
+
+\vspace{1em}
+
+% Grade table
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+\hline
+\textbf{Question} & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & \textbf{Total} \\
+\hline
+\textbf{Points} & /6 & /8 & /8 & /8 & /7 & /8 & /7 & /8 & \textbf{/60} \\
+\hline
+\textbf{Note} & & & & & & & & & \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{1em}
+\hrule
+\vspace{1em}
+
+%==============================================================================
+% PARTIE 1 : THÉORIE
+%==============================================================================
+\section*{Partie 1 -- Théorie (30 points)}
+
+%------------------------------------------------------------------------------
+% Question 1
+%------------------------------------------------------------------------------
+\subsection*{Question 1 -- Vrai ou Faux (6 points)}
+
+Pour chaque énoncé, indiquez s'il est \textbf{Vrai} ou \textbf{Faux}. Justifiez votre réponse en une ou deux phrases.
+
+\begin{enumerate}[label=\alph*)]
+    \item (1 pt) La complexité amortie O(1) de \texttt{ArrayList.add()} garantit que chaque appel individuel s'exécute en temps constant.
+
+    \vspace{3cm}
+
+    \item (1 pt) Dans une \texttt{LinkedList} Java, l'accès à l'élément du milieu (\texttt{get(n/2)}) est optimisé pour s'exécuter en O(1).
+
+    \vspace{3cm}
+
+    \item (1 pt) Une \texttt{Position} dans une liste positionnelle devient invalide si on insère un nouvel élément juste avant elle.
+
+    \vspace{3cm}
+
+    \item (1 pt) Dans un min-heap, le deuxième plus petit élément se trouve toujours à l'index 1 du tableau.
+
+    \vspace{3cm}
+
+    \item (1 pt) Un graphe non-orienté avec $n$ sommets peut avoir au maximum $n(n-1)$ arêtes.
+
+    \vspace{3cm}
+
+    \item (1 pt) La classe \texttt{java.util.Stack} est recommandée pour implémenter une pile dans du code Java moderne.
+
+    \vspace{3cm}
+\end{enumerate}
+
+\newpage
+
+%------------------------------------------------------------------------------
+% Question 2
+%------------------------------------------------------------------------------
+\subsection*{Question 2 -- Tableau de complexité (8 points)}
+
+Complétez le tableau suivant en indiquant la complexité temporelle de chaque opération.
+
+\textbf{Note :} Pour la liste positionnelle, on suppose que la \texttt{Position} est déjà connue.
+
+\vspace{0.5em}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.8}
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Opération} & \textbf{ArrayList} & \textbf{LinkedList} & \textbf{Liste Positionnelle*} \\
+\hline
+\texttt{get(k)} -- accès par index & & & \\
+\hline
+\texttt{add(0, e)} -- insertion au début & & & \\
+\hline
+\texttt{add(n/2, e)} -- insertion au milieu & & & \\
+\hline
+\texttt{remove(position)} -- suppression & & & \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{1em}
+
+Complétez également ce tableau pour les files à priorité (heap) :
+
+\vspace{0.5em}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.8}
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Opération} & \textbf{Heap simple} & \textbf{Heap adaptable**} \\
+\hline
+\texttt{insert(k, v)} & & \\
+\hline
+\texttt{removeMin()} & & \\
+\hline
+\texttt{min()} & & \\
+\hline
+\texttt{replaceKey(entry, newKey)} & & \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{0.5em}
+\small{*Position déjà obtenue au préalable \quad **Avec structure de localisation}
+
+\vspace{3cm}
+
+%------------------------------------------------------------------------------
+% Question 3
+%------------------------------------------------------------------------------
+\subsection*{Question 3 -- Choix multiples (8 points)}
+
+Pour chaque question, \textbf{encerclez} la ou les bonnes réponses. Il peut y avoir plusieurs réponses correctes.
+
+\vspace{0.5em}
+
+\textbf{3.1} (2 pts) Quelles affirmations sont \textbf{vraies} concernant les piles et files ?
+
+\begin{enumerate}[label=\Alph*)]
+    \item \texttt{ArrayDeque} est plus performant que \texttt{java.util.Stack} pour implémenter une pile.
+    \item Une file (Queue) permet l'accès au premier \textbf{et} au dernier élément en O(1).
+    \item Une Deque peut être utilisée comme pile \textbf{ou} comme file.
+    \item \texttt{java.util.Stack} hérite de \texttt{ArrayList}.
+\end{enumerate}
+
+\vspace{1.5cm}
+
+\textbf{3.2} (2 pts) Pour un pattern producteur-consommateur avec buffer borné où le consommateur doit bloquer si le buffer est vide, quelle structure Java est la plus appropriée ?
+
+\begin{enumerate}[label=\Alph*)]
+    \item \texttt{LinkedList} avec \texttt{synchronized}
+    \item \texttt{ArrayDeque}
+    \item \texttt{ArrayBlockingQueue}
+    \item \texttt{PriorityQueue}
+\end{enumerate}
+
+\vspace{1.5cm}
+
+\textbf{3.3} (2 pts) Quelles affirmations sont \textbf{vraies} concernant les heaps ?
+
+\begin{enumerate}[label=\Alph*)]
+    \item Un heap binaire est toujours un arbre complet.
+    \item Un heap et un arbre binaire de recherche (BST) ont la même propriété d'ordre.
+    \item Dans un min-heap, le plus petit élément est toujours à la racine.
+    \item La recherche d'un élément quelconque dans un heap est O(log n).
+\end{enumerate}
+
+\vspace{1.5cm}
+
+\textbf{3.4} (2 pts) Pour un graphe de 10 000 sommets et 50 000 arêtes (non-orienté), quelle représentation utilise le moins de mémoire ?
+
+\begin{enumerate}[label=\Alph*)]
+    \item Matrice d'adjacence : environ 100 millions d'entrées
+    \item Liste d'adjacence : environ 100 000 entrées
+    \item Les deux utilisent la même quantité de mémoire
+    \item Impossible à déterminer sans plus d'informations
+\end{enumerate}
+
+\newpage
+
+%------------------------------------------------------------------------------
+% Question 4
+%------------------------------------------------------------------------------
+\subsection*{Question 4 -- Questions à réponse courte (8 points)}
+
+\textbf{4.1} (2 pts) Expliquez en quoi la liste de favoris avec heuristique \textit{move-to-front} diffère de la liste triée par fréquence. Donnez un avantage et un inconvénient de chaque approche.
+
+\vspace{5cm}
+
+\textbf{4.2} (2 pts) Qu'est-ce qu'un \textbf{invariant} de structure de données ? Donnez un exemple concret avec le coût associé à son maintien.
+
+\vspace{5cm}
+
+\textbf{4.3} (2 pts) Expliquez pourquoi une file à priorité adaptable nécessite une structure auxiliaire (comme un HashMap) pour atteindre O(log n) sur \texttt{replaceKey()}.
+
+\vspace{5cm}
+
+\textbf{4.4} (2 pts) Un graphe biparti peut-il contenir un cycle ? Si oui, quelle contrainte doit respecter ce cycle ?
+
+\vspace{4cm}
+
+\newpage
+
+%==============================================================================
+% PARTIE 2 : TRACES ET ANALYSE
+%==============================================================================
+\section*{Partie 2 -- Traces et Analyse (15 points)}
+
+%------------------------------------------------------------------------------
+% Question 5
+%------------------------------------------------------------------------------
+\subsection*{Question 5 -- Opérations sur un Heap (7 points)}
+
+Soit un \textbf{min-heap} initialement vide.
+
+\textbf{5.1} (4 pts) Insérez successivement les clés \texttt{7, 3, 9, 1, 5, 8, 2} dans le heap.
+
+Montrez l'état du tableau après \textbf{chaque} insertion (en détaillant les échanges up-heap si nécessaire).
+
+\vspace{10cm}
+
+\textbf{5.2} (3 pts) À partir du heap final obtenu en 5.1, exécutez \textbf{deux} opérations \texttt{removeMin()} successives.
+
+Pour chaque \texttt{removeMin()}, montrez :
+\begin{itemize}
+    \item L'élément retiré
+    \item Les étapes du down-heap
+    \item L'état final du tableau
+\end{itemize}
+
+\vspace{8cm}
+
+\newpage
+
+%------------------------------------------------------------------------------
+% Question 6
+%------------------------------------------------------------------------------
+\subsection*{Question 6 -- Représentation de Graphe (8 points)}
+
+Soit le graphe \textbf{orienté} $G$ défini par les arcs suivants :
+
+\begin{center}
+$(A \to B), (A \to C), (A \to D), (B \to C), (B \to E), (C \to D), (D \to E), (E \to A)$
+\end{center}
+
+\vspace{0.5em}
+
+\textbf{6.1} (2 pts) Dessinez le graphe.
+
+\vspace{5cm}
+
+\textbf{6.2} (3 pts) Donnez la \textbf{matrice d'adjacence} de $G$ (5$\times$5).
+
+\vspace{0.5em}
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{c|c|c|c|c|c|}
+  & \textbf{A} & \textbf{B} & \textbf{C} & \textbf{D} & \textbf{E} \\
+\hline
+\textbf{A} & & & & & \\
+\hline
+\textbf{B} & & & & & \\
+\hline
+\textbf{C} & & & & & \\
+\hline
+\textbf{D} & & & & & \\
+\hline
+\textbf{E} & & & & & \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{2cm}
+
+\textbf{6.3} (2 pts) Donnez la \textbf{liste d'adjacence} de $G$.
+
+\vspace{4cm}
+
+\textbf{6.4} (1 pt) Complétez le tableau des degrés pour chaque sommet :
+
+\vspace{0.5em}
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Sommet} & \textbf{Degré sortant} & \textbf{Degré entrant} \\
+\hline
+A & & \\
+\hline
+B & & \\
+\hline
+C & & \\
+\hline
+D & & \\
+\hline
+E & & \\
+\hline
+\end{tabular}
+\end{center}
+
+\newpage
+
+%==============================================================================
+% PARTIE 3 : CODE ET CONCEPTION
+%==============================================================================
+\section*{Partie 3 -- Code et Conception (15 points)}
+
+%------------------------------------------------------------------------------
+% Question 7
+%------------------------------------------------------------------------------
+\subsection*{Question 7 -- Analyse et Correction de Code (7 points)}
+
+Le code suivant tente de retourner les $k$ plus grands éléments d'un tableau. Il contient \textbf{au moins deux erreurs}.
+
+\begin{lstlisting}[style=java]
+public static int[] topK(int[] array, int k) {
+    // Max-heap pour garder les k plus grands
+    PriorityQueue<Integer> maxHeap = new PriorityQueue<>(
+        Collections.reverseOrder()
+    );
+
+    for (int num : array) {
+        maxHeap.offer(num);
+        if (maxHeap.size() > k) {
+            maxHeap.poll();  // Retirer le plus grand
+        }
+    }
+
+    int[] result = new int[k];
+    for (int i = 0; i < k; i++) {
+        result[i] = maxHeap.poll();
+    }
+    return result;
+}
+\end{lstlisting}
+
+\vspace{0.5em}
+
+\textbf{7.1} (3 pts) Identifiez les erreurs et expliquez pourquoi elles sont problématiques.
+
+\vspace{6cm}
+
+\textbf{7.2} (2 pts) Réécrivez le code corrigé (vous pouvez écrire seulement les parties modifiées).
+
+\vspace{5cm}
+
+\textbf{7.3} (2 pts) Quelle est la complexité temporelle de l'algorithme corrigé ? Justifiez.
+
+\vspace{4cm}
+
+\newpage
+
+%------------------------------------------------------------------------------
+% Question 8
+%------------------------------------------------------------------------------
+\subsection*{Question 8 -- Scénario de Conception (8 points)}
+
+\textbf{Contexte :} Vous concevez un système de gestion d'urgences hospitalières.
+
+\textbf{Données :}
+\begin{itemize}
+    \item Patients arrivent avec un niveau d'urgence (1 = critique, 5 = mineur)
+    \item À niveau égal, le patient arrivé en premier est traité en premier
+    \item L'état d'un patient peut s'aggraver (son niveau change de 4 à 2, par exemple)
+    \item ~500 patients en attente aux heures de pointe
+    \item ~100 arrivées et ~100 traitements par heure
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{8.1} (2 pts) Une simple \texttt{Queue} FIFO suffit-elle ? Justifiez.
+
+\vspace{4cm}
+
+\textbf{8.2} (3 pts) Proposez une structure de données (ou combinaison de structures) qui répond aux besoins. Décrivez chaque opération principale et sa complexité :
+
+\begin{itemize}
+    \item \textbf{Arrivée} d'un patient
+    \item \textbf{Traitement} du prochain patient (retirer le plus urgent)
+    \item \textbf{Changement} de niveau d'urgence d'un patient
+\end{itemize}
+
+\vspace{8cm}
+
+\textbf{8.3} (3 pts) Comment gérer le cas ``à niveau égal, premier arrivé premier traité'' ? Expliquez comment modifier votre structure ou clé de priorité.
+
+\vspace{5cm}
+
+\newpage
+
+%==============================================================================
+% CORRIGÉ
+%==============================================================================
+\section*{Corrigé}
+
+\subsection*{Question 1 -- Vrai ou Faux}
+
+\begin{enumerate}[label=\alph*)]
+    \item \textbf{Faux.} La complexité amortie O(1) signifie que sur $n$ opérations, le coût total est O($n$). Mais certaines opérations individuelles (redimensionnement) peuvent prendre O($n$).
+
+    \item \textbf{Faux.} Java optimise en partant du début ou de la fin selon l'index, mais il n'y a pas d'accès direct au milieu. \texttt{get(n/2)} reste O($n$) dans le pire cas.
+
+    \item \textbf{Faux.} Une Position reste valide après insertions/suppressions d'autres éléments. Elle devient invalide uniquement quand son propre élément est supprimé.
+
+    \item \textbf{Faux.} Le 2e plus petit est à l'index 1 \textbf{ou} 2 (un des deux enfants de la racine). L'invariant ne garantit pas l'ordre entre les enfants.
+
+    \item \textbf{Faux.} Maximum = $n(n-1)/2$ pour un graphe non-orienté simple. La formule $n(n-1)$ est pour un graphe orienté.
+
+    \item \textbf{Faux.} \texttt{java.util.Stack} est legacy, hérite de \texttt{Vector}, et est synchronisé. La recommandation est d'utiliser \texttt{ArrayDeque}.
+\end{enumerate}
+
+\subsection*{Question 2 -- Tableaux de complexité}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Opération} & \textbf{ArrayList} & \textbf{LinkedList} & \textbf{Liste Pos.*} \\
+\hline
+\texttt{get(k)} & O(1) & O($n$) & O($n$) \\
+\hline
+\texttt{add(0, e)} & O($n$) & O(1) & O(1) \\
+\hline
+\texttt{add(n/2, e)} & O($n$) & O($n$) & O(1)* \\
+\hline
+\texttt{remove(position)} & O($n$) & O(1)* & O(1) \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Opération} & \textbf{Heap simple} & \textbf{Heap adaptable} \\
+\hline
+\texttt{insert(k, v)} & O(log $n$) & O(log $n$) \\
+\hline
+\texttt{removeMin()} & O(log $n$) & O(log $n$) \\
+\hline
+\texttt{min()} & O(1) & O(1) \\
+\hline
+\texttt{replaceKey()} & O($n$) & O(log $n$) \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection*{Question 3 -- Choix multiples}
+
+\textbf{3.1} \textbf{A, C} -- ArrayDeque est plus performant, et Deque peut servir de pile ou file. (B faux: Queue n'expose que le premier; D faux: Stack hérite de Vector)
+
+\textbf{3.2} \textbf{C} -- ArrayBlockingQueue offre put/take bloquants et capacité bornée.
+
+\textbf{3.3} \textbf{A, C} -- Heap = arbre complet, min à la racine. (B faux: propriétés d'ordre différentes; D faux: recherche O($n$))
+
+\textbf{3.4} \textbf{B} -- Matrice: $10000^2 = 100M$. Liste: $10000 + 2 \times 50000 = 110000 \approx 100K$. Liste gagne.
+
+\subsection*{Question 4 -- Réponses courtes}
+
+\textbf{4.1}
+\begin{itemize}
+    \item \textbf{Liste triée}: maintient l'ordre par fréquence. \texttt{getFavorites(k)} en O($k$), mais insertion coûte O($n$).
+    \item \textbf{Move-to-front}: déplace en tête à chaque accès. Bénéficie de la localité temporelle, mais \texttt{getFavorites(k)} coûte O($kn$).
+\end{itemize}
+
+\textbf{4.2} Un invariant est une propriété toujours vraie sur la structure. Ex: ``liste triée'' -- coût: insertion O($n$) au lieu de O(1), bénéfice: \texttt{min()} O(1) au lieu de O($n$).
+
+\textbf{4.3} Sans localisation, trouver une entrée dans un heap nécessite O($n$). Avec HashMap<Entry,Index>, on localise en O(1), puis up/down-heap en O(log $n$).
+
+\textbf{4.4} Oui, un graphe biparti peut contenir des cycles. Contrainte: le cycle doit être de longueur \textbf{paire} (alterner entre les deux ensembles).
+
+\subsection*{Question 5 -- Heap}
+
+\textbf{5.1} Insertions:
+\begin{enumerate}
+    \item \texttt{insert(7)}: [7]
+    \item \texttt{insert(3)}: [7,3] $\to$ 3<7 $\to$ [3,7]
+    \item \texttt{insert(9)}: [3,7,9]
+    \item \texttt{insert(1)}: [3,7,9,1] $\to$ 1<7 $\to$ [3,1,9,7] $\to$ 1<3 $\to$ \textbf{[1,3,9,7]}
+    \item \texttt{insert(5)}: [1,3,9,7,5] $\to$ 5>3 $\to$ \textbf{[1,3,9,7,5]}
+    \item \texttt{insert(8)}: [1,3,9,7,5,8] $\to$ 8<9 $\to$ \textbf{[1,3,8,7,5,9]}
+    \item \texttt{insert(2)}: [1,3,8,7,5,9,2] $\to$ 2<8 $\to$ [1,3,2,7,5,9,8] $\to$ 2>1 $\to$ \textbf{[1,3,2,7,5,9,8]}
+\end{enumerate}
+
+\textbf{5.2} removeMin():
+\begin{enumerate}
+    \item Retirer 1, remplacer par 8: [8,3,2,7,5,9] $\to$ min(3,2)=2, 8>2 $\to$ [2,3,8,7,5,9] $\to$ min(9)=9, 8<9 $\to$ \textbf{[2,3,8,7,5,9]}
+    \item Retirer 2, remplacer par 9: [9,3,8,7,5] $\to$ min(3,8)=3, 9>3 $\to$ [3,9,8,7,5] $\to$ min(7,5)=5, 9>5 $\to$ \textbf{[3,5,8,7,9]}
+\end{enumerate}
+
+\subsection*{Question 6 -- Graphe}
+
+\textbf{6.2} Matrice:
+\begin{center}
+\begin{tabular}{c|ccccc}
+  & A & B & C & D & E \\
+\hline
+A & 0 & 1 & 1 & 1 & 0 \\
+B & 0 & 0 & 1 & 0 & 1 \\
+C & 0 & 0 & 0 & 1 & 0 \\
+D & 0 & 0 & 0 & 0 & 1 \\
+E & 1 & 0 & 0 & 0 & 0 \\
+\end{tabular}
+\end{center}
+
+\textbf{6.3} Liste: A$\to$[B,C,D], B$\to$[C,E], C$\to$[D], D$\to$[E], E$\to$[A]
+
+\textbf{6.4} Degrés: A(3,1), B(2,1), C(1,2), D(1,2), E(1,2). Total out=in=8 $\checkmark$
+
+\subsection*{Question 7 -- Code}
+
+\textbf{7.1} Erreurs:
+\begin{enumerate}
+    \item \textbf{Type de heap}: Max-heap retire le plus grand, donc on perd les grands éléments! Il faut un \textbf{min-heap} de taille $k$ pour garder les $k$ plus grands.
+    \item \textbf{Taille du résultat}: Si \texttt{array.length < k}, le heap aura moins de $k$ éléments, causant une exception.
+\end{enumerate}
+
+\textbf{7.2} Code corrigé:
+\begin{lstlisting}[style=java]
+PriorityQueue<Integer> minHeap = new PriorityQueue<>();  // Min-heap!
+// ...
+int[] result = new int[minHeap.size()];  // Taille reelle
+\end{lstlisting}
+
+\textbf{7.3} O($n$ log $k$): on parcourt $n$ éléments, chaque opération heap coûte O(log $k$).
+
+\subsection*{Question 8 -- Conception}
+
+\textbf{8.1} Non, FIFO ne tient pas compte de l'urgence. Un patient critique attendrait derrière des cas mineurs.
+
+\textbf{8.2} \textbf{Min-heap adaptable} (priorité = niveau d'urgence) + \textbf{HashMap<PatientId, Entry>}:
+\begin{itemize}
+    \item Arrivée: \texttt{insert()} O(log $n$)
+    \item Traitement: \texttt{removeMin()} O(log $n$)
+    \item Changement: localiser via HashMap O(1), puis \texttt{replaceKey()} O(log $n$)
+\end{itemize}
+
+\textbf{8.3} Utiliser une clé composite: \texttt{(niveau, timestamp)}. Comparer d'abord par niveau, puis par timestamp si égaux. Ainsi, à niveau égal, le patient arrivé plus tôt (timestamp plus petit) est prioritaire.
+
+\vspace{1em}
+
+\subsection*{Barème}
+
+\begin{center}
+\begin{tabular}{|l|c|}
+\hline
+\textbf{Section} & \textbf{Points} \\
+\hline
+Q1 -- Vrai/Faux (6 $\times$ 1 pt) & 6 \\
+Q2 -- Tableaux complexité (8 cases $\times$ 1 pt) & 8 \\
+Q3 -- QCM (4 $\times$ 2 pts) & 8 \\
+Q4 -- Réponses courtes (4 $\times$ 2 pts) & 8 \\
+Q5 -- Trace heap (4 + 3 pts) & 7 \\
+Q6 -- Graphe (2 + 3 + 2 + 1 pts) & 8 \\
+Q7 -- Code (3 + 2 + 2 pts) & 7 \\
+Q8 -- Conception (2 + 3 + 3 pts) & 8 \\
+\hline
+\textbf{Total} & \textbf{60} \\
+\hline
+\end{tabular}
+\end{center}
+
+\end{document}
