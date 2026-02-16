@@ -62,6 +62,12 @@ Cette section contient les corrigés des quiz et examens du cours.
 
 ---
 
+### Quiz 3
+
+[:material-file-pdf-box: Télécharger le corrigé](files/quiz/IFT2015_Quiz_03_Corrige.pdf){ .md-button }
+
+---
+
 ### Total des quiz à date
 
 === "Sans valeurs manquantes"
