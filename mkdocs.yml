@@ -103,6 +103,7 @@ plugins:
             "Démonstration 3 : Piles, Files, Deques et Liste de Favoris": "Demo 3: Stacks, Queues, Deques and Favorites List"
             "Démonstration 4 : Files avec priorités et Tas (Heaps)": "Demo 4: Priority Queues and Heaps"
             "Démonstration 5 : Révision Mi-Session": "Demo 5: Mid-Session Review"
+            "Démonstration 6 : Maps et Tables de Hachage": "Demo 6: Maps and Hash Tables"
             Travaux pratiques: Lab Work
             "Aide-mémoire — Intra": "Cheatsheet — Midterm"
             Corrections: Answer Keys
@@ -119,6 +120,7 @@ plugins:
             "Démonstration 3 : Piles, Files, Deques et Liste de Favoris": "演示 3：栈、队列、双端队列与收藏列表"
             "Démonstration 4 : Files avec priorités et Tas (Heaps)": "演示 4：优先队列与堆"
             "Démonstration 5 : Révision Mi-Session": "演示 5：期中复习"
+            "Démonstration 6 : Maps et Tables de Hachage": "演示 6：映射与哈希表"
             Travaux pratiques: 实验作业
             "Aide-mémoire — Intra": "速查表 — 期中"
             Corrections: 答案
