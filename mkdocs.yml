@@ -43,7 +43,9 @@ nav:
       - "Démonstration 3 : Piles, Files, Deques et Liste de Favoris": exercices/demo3.md
       - "Démonstration 4 : Files avec priorités et Tas (Heaps)": exercices/demo4.md
       - "Démonstration 5 : Révision Mi-Session": exercices/demo5.md
+      - "Démonstration 6 : Maps et Tables de Hachage": exercices/demo6.md
   - Travaux pratiques: tp/index.md
+  - "Aide-mémoire — Intra": cheatsheet-intra.md
   - Corrections: corrections.md
   - Configuration: configuration.md
 
@@ -102,6 +104,7 @@ plugins:
             "Démonstration 4 : Files avec priorités et Tas (Heaps)": "Demo 4: Priority Queues and Heaps"
             "Démonstration 5 : Révision Mi-Session": "Demo 5: Mid-Session Review"
             Travaux pratiques: Lab Work
+            "Aide-mémoire — Intra": "Cheatsheet — Midterm"
             Corrections: Answer Keys
             Configuration: Configuration
         - locale: zh
@@ -117,6 +120,7 @@ plugins:
             "Démonstration 4 : Files avec priorités et Tas (Heaps)": "演示 4：优先队列与堆"
             "Démonstration 5 : Révision Mi-Session": "演示 5：期中复习"
             Travaux pratiques: 实验作业
+            "Aide-mémoire — Intra": "速查表 — 期中"
             Corrections: 答案
             Configuration: 配置
   - mkdocs_matplotlib
