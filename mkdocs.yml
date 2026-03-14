@@ -44,7 +44,9 @@ nav:
       - "Démonstration 4 : Files avec priorités et Tas (Heaps)": exercices/demo4.md
       - "Démonstration 5 : Révision Mi-Session": exercices/demo5.md
       - "Démonstration 6 : Maps et Tables de Hachage": exercices/demo6.md
-  - Travaux pratiques: tp/index.md
+  - Travaux pratiques:
+      - Aperçu: tp/index.md
+      - "TP1 : Autocomplétion": tp/tp1.md
   - "Aide-mémoire — Intra": cheatsheet-intra.md
   - Corrections: corrections.md
   - Configuration: configuration.md
@@ -105,6 +107,8 @@ plugins:
             "Démonstration 5 : Révision Mi-Session": "Demo 5: Mid-Session Review"
             "Démonstration 6 : Maps et Tables de Hachage": "Demo 6: Maps and Hash Tables"
             Travaux pratiques: Lab Work
+            Aperçu: Overview
+            "TP1 : Autocomplétion": "Lab 1: Autocomplete"
             "Aide-mémoire — Intra": "Cheatsheet — Midterm"
             Corrections: Answer Keys
             Configuration: Configuration
@@ -122,6 +126,8 @@ plugins:
             "Démonstration 5 : Révision Mi-Session": "演示 5：期中复习"
             "Démonstration 6 : Maps et Tables de Hachage": "演示 6：映射与哈希表"
             Travaux pratiques: 实验作业
+            Aperçu: 概览
+            "TP1 : Autocomplétion": "实验1：自动补全"
             "Aide-mémoire — Intra": "速查表 — 期中"
             Corrections: 答案
             Configuration: 配置

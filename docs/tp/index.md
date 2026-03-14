@@ -6,4 +6,4 @@ Cette section contient les consignes et ressources pour les travaux pratiques no
 
 ## :material-numeric-1-circle: TP1
 
-À venir.
+[Voir le TP1](tp1.md)

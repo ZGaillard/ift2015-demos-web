@@ -6,4 +6,4 @@ This section contains the instructions and resources for the graded lab assignme
 
 ## :material-numeric-1-circle: Lab 1
 
-Coming soon.
+[View Lab 1](tp1.md)
