@@ -2,6 +2,10 @@
 
 [:material-folder-zip: Download Lab 1](../files/tp-autocompleter.zip){ .md-button .md-button--primary }
 
+!!! info "Demo presentation"
+
+    The lab will be presented in detail during the **March 17 demo**.
+
 ---
 
 ## Context and objectives

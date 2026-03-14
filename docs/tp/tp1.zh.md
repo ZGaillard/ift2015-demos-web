@@ -2,6 +2,10 @@
 
 [:material-folder-zip: 下载实验1](../files/tp-autocompleter.zip){ .md-button .md-button--primary }
 
+!!! info "演示课说明"
+
+    本实验将在 **3月17日的演示课**上详细介绍。
+
 ---
 
 ## 背景与目标

@@ -2,6 +2,10 @@
 
 [:material-folder-zip: Télécharger le TP1](../files/tp-autocompleter.zip){ .md-button .md-button--primary }
 
+!!! info "Présentation en démo"
+
+    Le TP sera présenté en détail lors de la **démonstration du 17 mars**.
+
 ---
 
 ## Contexte et objectifs
