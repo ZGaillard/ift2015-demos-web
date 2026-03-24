@@ -37,6 +37,7 @@ theme:
 
 nav:
   - Accueil: index.md
+  - Programme: cursus.md
   - Exercices:
       - Aperçu: exercices/index.md
       - "Démonstration 2 : Listes et listes positionnelles": exercices/demo2.md
@@ -44,6 +45,8 @@ nav:
       - "Démonstration 4 : Files avec priorités et Tas (Heaps)": exercices/demo4.md
       - "Démonstration 5 : Révision Mi-Session": exercices/demo5.md
       - "Démonstration 6 : Maps et Tables de Hachage": exercices/demo6.md
+      - "Démonstration 7 : BST, Maps ordonnées et Graphes II": exercices/demo7.md
+      - "Démonstration 8 : Map ordonnée et Arbres de recherche": exercices/demo8.md
   - "TP1 : Autocomplétion": tp/index.md
   - "Aide-mémoire — Intra": cheatsheet-intra.md
   - Corrections: corrections.md
@@ -97,6 +100,7 @@ plugins:
           site_name: "IFT2015 - Data Structures"
           nav_translations:
             Accueil: Home
+            Programme: Curriculum
             Exercices: Exercises
             Aperçu: Overview
             "Démonstration 2 : Listes et listes positionnelles": "Demo 2: Lists and Positional Lists"
@@ -104,6 +108,8 @@ plugins:
             "Démonstration 4 : Files avec priorités et Tas (Heaps)": "Demo 4: Priority Queues and Heaps"
             "Démonstration 5 : Révision Mi-Session": "Demo 5: Mid-Session Review"
             "Démonstration 6 : Maps et Tables de Hachage": "Demo 6: Maps and Hash Tables"
+            "Démonstration 7 : BST, Maps ordonnées et Graphes II": "Demo 7: BST, Sorted Maps and Graphs II"
+            "Démonstration 8 : Map ordonnée et Arbres de recherche": "Demo 8: Sorted Map and Search Trees"
             "TP1 : Autocomplétion": "Lab 1: Autocomplete"
             "Aide-mémoire — Intra": "Cheatsheet — Midterm"
             Corrections: Answer Keys
@@ -114,6 +120,7 @@ plugins:
           site_name: "IFT2015 - 数据结构"
           nav_translations:
             Accueil: 首页
+            Programme: 课程大纲
             Exercices: 练习
             Aperçu: 概览
             "Démonstration 2 : Listes et listes positionnelles": "演示 2：列表与位置列表"
@@ -121,6 +128,8 @@ plugins:
             "Démonstration 4 : Files avec priorités et Tas (Heaps)": "演示 4：优先队列与堆"
             "Démonstration 5 : Révision Mi-Session": "演示 5：期中复习"
             "Démonstration 6 : Maps et Tables de Hachage": "演示 6：映射与哈希表"
+            "Démonstration 7 : BST, Maps ordonnées et Graphes II": "演示 7：BST、有序映射与图 II"
+            "Démonstration 8 : Map ordonnée et Arbres de recherche": "演示 8：有序映射与搜索树"
             "TP1 : Autocomplétion": "实验1：自动补全"
             "Aide-mémoire — Intra": "速查表 — 期中"
             Corrections: 答案

@@ -19,3 +19,5 @@ Cette section contient les exercices pratiques hebdomadaires du cours IFT2015. C
 | 4 | 9 | Files avec priorités et Tas (Heaps) | [:material-arrow-right-circle: Démonstration 4](demo4.md) |
 | 5 | 6, 7, 9, 14 | **Révision Mi-Session** | [:material-arrow-right-circle: Démonstration 5](demo5.md) |
 | 6 | 10.1, 10.2 | Map et HashTable | [:material-arrow-right-circle: Démonstration 6](demo6.md) |
+| 7 | 8.1, 8.3–8.4, 10.1–10.2, 13.3, 14.3 | BST, Maps ordonnées et Graphes II | [:material-arrow-right-circle: Démonstration 7](demo7.md) |
+| 8 | 10.3, 10.4, 11.1, 11.2 | Map ordonnée, SkipList et Arbres de recherche | [:material-arrow-right-circle: Démonstration 8](demo8.md) |
