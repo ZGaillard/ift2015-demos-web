@@ -47,6 +47,8 @@ nav:
       - "Démonstration 6 : Maps et Tables de Hachage": exercices/demo6.md
       - "Démonstration 7 : BST, Maps ordonnées et Graphes II": exercices/demo7.md
       - "Démonstration 8 : Map ordonnée et Arbres de recherche": exercices/demo8.md
+      - "Démonstration 9 : Arbres AVL et Splay": exercices/demo9.md
+      - "Démonstration 10 : Arbres Rouge-Noir": exercices/demo10.md
   - "TP1 : Autocomplétion": tp/index.md
   - "Aide-mémoire — Intra": cheatsheet-intra.md
   - Corrections: corrections.md
@@ -110,6 +112,8 @@ plugins:
             "Démonstration 6 : Maps et Tables de Hachage": "Demo 6: Maps and Hash Tables"
             "Démonstration 7 : BST, Maps ordonnées et Graphes II": "Demo 7: BST, Sorted Maps and Graphs II"
             "Démonstration 8 : Map ordonnée et Arbres de recherche": "Demo 8: Sorted Map and Search Trees"
+            "Démonstration 9 : Arbres AVL et Splay": "Demo 9: AVL and Splay Trees"
+            "Démonstration 10 : Arbres Rouge-Noir": "Demo 10: Red-Black Trees"
             "TP1 : Autocomplétion": "Lab 1: Autocomplete"
             "Aide-mémoire — Intra": "Cheatsheet — Midterm"
             Corrections: Answer Keys
@@ -130,6 +134,8 @@ plugins:
             "Démonstration 6 : Maps et Tables de Hachage": "演示 6：映射与哈希表"
             "Démonstration 7 : BST, Maps ordonnées et Graphes II": "演示 7：BST、有序映射与图 II"
             "Démonstration 8 : Map ordonnée et Arbres de recherche": "演示 8：有序映射与搜索树"
+            "Démonstration 9 : Arbres AVL et Splay": "演示 9：AVL 树与 Splay 树"
+            "Démonstration 10 : Arbres Rouge-Noir": "演示 10：红黑树"
             "TP1 : Autocomplétion": "实验1：自动补全"
             "Aide-mémoire — Intra": "速查表 — 期中"
             Corrections: 答案
