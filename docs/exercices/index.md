@@ -21,3 +21,5 @@ Cette section contient les exercices pratiques hebdomadaires du cours IFT2015. C
 | 6 | 10.1, 10.2 | Map et HashTable | [:material-arrow-right-circle: Démonstration 6](demo6.md) |
 | 7 | 8.1, 8.3–8.4, 10.1–10.2, 13.3, 14.3 | BST, Maps ordonnées et Graphes II | [:material-arrow-right-circle: Démonstration 7](demo7.md) |
 | 8 | 10.3, 10.4, 11.1, 11.2 | Map ordonnée, SkipList et Arbres de recherche | [:material-arrow-right-circle: Démonstration 8](demo8.md) |
+| 9 | 11.3, 11.4 | Arbres AVL et Splay | [:material-arrow-right-circle: Démonstration 9](demo9.md) |
+| 10 | 11.6 | Arbres Rouge-Noir | [:material-arrow-right-circle: Démonstration 10](demo10.md) |
