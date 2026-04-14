@@ -23,3 +23,4 @@ Cette section contient les exercices pratiques hebdomadaires du cours IFT2015. C
 | 8 | 10.3, 10.4, 11.1, 11.2 | Map ordonnée, SkipList et Arbres de recherche | [:material-arrow-right-circle: Démonstration 8](demo8.md) |
 | 9 | 11.3, 11.4 | Arbres AVL et Splay | [:material-arrow-right-circle: Démonstration 9](demo9.md) |
 | 10 | 11.6 | Arbres Rouge-Noir | [:material-arrow-right-circle: Démonstration 10](demo10.md) |
+| Bonus | -- | Série synthèse sur les patterns classiques | [:material-arrow-right-circle: Défis](challenges.md) |
