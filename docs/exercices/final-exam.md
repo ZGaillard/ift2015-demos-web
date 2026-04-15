@@ -1,6 +1,6 @@
-# Examen Final Pratique — IFT2015
+# Révision pour le final — IFT2015
 
-Cet examen couvre la **deuxième moitié du cours** (démonstrations 6 à 10).
+Cette révision couvre la **deuxième moitié du cours** (démonstrations 6 à 10).
 Il est conçu pour **2 heures** et se divise en 4 sections.
 
 !!! abstract "Consignes"
